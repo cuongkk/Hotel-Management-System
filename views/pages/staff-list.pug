@@ -1,0 +1,53 @@
+extends ../layouts/default.pug
+include ../mixins/checkbox-30.pug
+
+block main
+	main.main 
+		h1.box-title Quản lý phòng
+		.main1
+			//- Section 4
+			.section-4
+				.inner-wrap(style="display: grid; grid-template-columns: repeat(3, 1fr);")
+					.inner-item(style="justify-content: center") Tên
+					.inner-item(style="justify-content: center") CCCD
+					.inner-item(style="justify-content: center") Số điện thoại
+			//- End Section 4
+			//- Section 5
+			.section-5
+				.inner-wrap
+					.inner-search
+						<i class="fa-solid fa-magnifying-glass"></i>
+						input(type="text" placeholder="Tìm kiếm tên phòng")
+					.inner-button-create
+						a(href="")  + Thêm nhân viên
+			//- End Section 5
+
+		//- Section 6
+		.section-6 
+			.table-2 
+				table 
+					thead 
+						tr
+							th.text-left Mã nhân viên
+							th.text-left Tên nhân viên
+							th.text-left Chức vụ
+							th.text-center CCCD
+							th.text-center SĐT
+							th.text-center Địa chỉ
+					tbody 
+						tr 
+							td.text-left LT001
+							td.text-left 
+								div Nhân viên A
+							td.text-left Lễ tân
+							td.text-center 123456789
+							td.text-center 0123456789
+							td.text-center 123 Đường A, Phường B, Quận C
+			.pagination
+				select(class="inner-pagination")
+					option Trang 1
+					option Trang 2
+					option Trang 3
+				.inner-next
+					i(class="fa-solid fa-chevron-right")
+		//- End Section 6

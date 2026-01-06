@@ -2,3 +2,53 @@ extends ../layouts/default.pug
 
 block main
 	main.main 
+		h1.box-title Tổng quan
+		.section-1 
+			.inner-item
+				img(src='assets/images/icon-section1-1.png').inner-icon-1
+				.inner-content 
+					.inner-label Khách hàng
+					.inner-number 1.200
+			.inner-item
+				img(src='assets/images/icon-section1-2.png').inner-icon-2
+				.inner-content 
+					.inner-label Phòng
+					.inner-number 30
+			.inner-item
+				img(src='assets/images/icon-section1-3.png').inner-icon-3
+				.inner-content 
+					.inner-label Doanh thu
+					.inner-number 300.000đ
+		.section-3
+			.inner-title Phòng
+			.table-1 
+				table 
+					thead
+						tr
+							th.text-left Mã phòng
+							th.text-left Thông tin phòng
+							th.text-left Danh sách khách hàng
+							th.text-center Thanh toán
+							th.text-center Trạng thái
+							th.text-right Ngày thuê
+							th.text-center Tính tiền
+					tbody 
+						tr 
+							td
+								.inner-code R001
+							td
+								div Tên phòng 
+								div Loại phòng
+							td
+								div Nguyễn Văn A
+								div Nguyễn Thị B
+							td
+								.status.status-red Chưa thanh toán
+							td
+								.status.status-orange Đang thuê
+								//- .status.status-green Đã thanh toán
+							td
+								div 16:20
+								div 01/01/2024
+							td
+								button.status.status-purple Thanh toán

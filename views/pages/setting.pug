@@ -1,0 +1,58 @@
+extends ../layouts/default.pug
+include ../mixins/checkbox-30.pug
+
+block main
+	main.main
+		h1.box-title Cài đặt
+		.section-8
+			form(action="" id="room-create-form")
+				.inner-group 
+					label.inner-label(for="price") Phụ thu
+					input(type="text" id="price" name="price" value="1.5")
+					button.inner-change
+						<i class="fa-solid fa-pen-to-square"></i>
+				.inner-group.inner-two-col(style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px;	")
+					label.inner-label(for="type") Loại khách
+					label.inner-label(for="num") Hệ số
+					label.inner-label(for="delete")
+					label.inner-label(for="note")
+					.inner-group 
+						input(type="text" id="price" name="price" value="Loại A")
+						button.inner-change(style="top:30% ")
+							<i class="fa-solid fa-pen-to-square"></i>
+					.inner-group 
+						input(type="text" id="price" name="price" value="1.5")
+						button.inner-change(style="top:30% ")
+							<i class="fa-solid fa-pen-to-square"></i>
+					.inner-group(style="display: flex; justify-content: flex-start; align-items: center;")
+						button.inner-remove(style="color: #ef3826; background-color: #FFAAAA; height: 100%; width: 100px; border-radius: 5px; border: none; cursor: pointer;") 
+							<i class="fa-solid fa-trash-can"></i>
+				.inner-button.inner-two-col(style="display: flex; justify-content: flex-start;")
+					button Thêm loại khách
+				.inner-group.inner-two-col(style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px;	")
+					label.inner-label(for="type") Loại phòng
+					label.inner-label(for="price") Đơn giá
+					label.inner-label(for="quantity") Số phòng
+					label.inner-label(for="delete")
+					.inner-group 
+						input(type="text" id="price" name="price" value="Loại A")
+						button.inner-change(style="top:30% ")
+							<i class="fa-solid fa-pen-to-square"></i>
+					.inner-group 
+						input(type="text" id="price" name="price" value="150.000Đ")
+						button.inner-change(style="top:30% ")
+							<i class="fa-solid fa-pen-to-square"></i>
+					.inner-group 
+						input(type="text" id="price" name="price" value="10")
+						button.inner-change(style="top:30% ")
+							<i class="fa-solid fa-pen-to-square"></i>
+					.inner-group(style="display: flex; justify-content: flex-start; align-items: center;")
+						button.inner-remove(style="color: #ef3826; background-color: #FFAAAA; height: 100%; width: 100px; border-radius: 5px; border: none; cursor: pointer;") 
+							<i class="fa-solid fa-trash-can"></i>
+				.inner-button.inner-two-col(style="display: flex; justify-content: flex-start;")
+					button Thêm loại phòng
+				.inner-button.inner-two-col
+					button Lưu
+			.inner-back 
+				a(href="") Quay lại danh sách
+		

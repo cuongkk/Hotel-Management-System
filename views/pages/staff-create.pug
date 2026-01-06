@@ -1,0 +1,35 @@
+extends ../layouts/default.pug
+include ../mixins/checkbox-30.pug
+
+block main
+	main.main
+		h1.box-title Thêm nhân viên
+		.section-8
+			form(action="" id="room-create-form")
+				.inner-group 
+					label.inner-label(for="name") Họ tên
+					input(type="text" id="name" name="name" placeholder="Nhập họ tên")
+				.inner-group 
+					label.inner-label(for="email") Email
+					input(type="text" id="email" name="email" placeholder="Nhập email")
+				.inner-group 
+					label.inner-label(for="phone") Số điện thoại
+					input(type="text" id="phone" name="phone" placeholder="Nhập số điện thoại")
+				.inner-group 
+					label.inner-label(for="type") Chức vụ
+					select(id="type" name="type" defaultValue="Chọn chức vụ")
+						option(value="") Chọn chức vụ
+						option(value="") Lễ tân
+						option(value="") Quản lý
+				.inner-group 
+					label.inner-label(for="password") Mật khẩu
+					input(type="text" id="password" name="password" placeholder="Nhập mật khẩu")
+				.inner-group.inner-two-col
+					label.inner-label(for="avatar") Ảnh đại diện
+					.inner-upload-image
+						input(type="file" id="avatar" name="avatar" filepond-image)
+				.inner-button.inner-two-col
+					button Tạo mới
+			.inner-back 
+				a(href="") Quay lại danh sách
+		

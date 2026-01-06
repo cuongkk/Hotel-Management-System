@@ -1,0 +1,51 @@
+extends ../layouts/default.pug
+include ../mixins/checkbox-30.pug
+
+block main
+	main.main
+		h1.box-title Lập phiếu thuê phòng
+		.section-8
+			form(action="" id="rental-create-form")
+				.inner-group 
+					label.inner-label(for="name") Tên phòng
+					input(type="text" id="name" name="name" placeholder="Nhập tên phòng")
+				.inner-group 
+					label.inner-label(for="type") Loại phòng
+					select(id="type" name="type")
+						option(value="") Loại A
+						option(value="") Loại B
+				.inner-group 
+					label.inner-label(for="price") Đơn giá
+					input(type="text" id="price" name="price" placeholder="Nhập giá phòng")
+				.inner-group 
+					label.inner-label(for="startDate") Ngày bắt đầu thuê
+					input(type="date" id="startDate" name="startDate" placeholder="Nhập ngày bắt đầu thuê")
+				.inner-group.inner-two-col
+					label.inner-label(for="note") Thông tin khách hàng
+					table.inner-table
+						thead
+							tr  
+								th STT 
+								th Họ và tên
+								th Loại khách 
+								th Số CMND/CCCD
+								th Số điện thoại
+						tbody
+							tr  
+								td 1
+								td 
+									input(type="text")
+								td 
+									select
+										option(value="") Nội địa
+										option(value="") Nước ngoài
+								td 
+									input(type="text")
+								td 
+									input(type="text")
+				.inner-button.inner-two-col(style="display: flex; justify-content: space-between;")
+					button(style="color: black; background-color: #FFAAAA;") Hủy bỏ
+					button Lưu
+			.inner-back 
+				a(href=`/${pathAdmin}/tour/list`) Quay lại danh sách
+		

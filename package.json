@@ -5,14 +5,17 @@
   "author": "Nguyễn Tuấn Cường <ntuancuong2005@gmail.com>",
   "license": "MIT",
   "scripts": {
+    "dev": "nodemon index.js",
     "start": "node --inspect index.js"
   },
   "dependencies": {
     "bug": "^1.2.0",
     "dotenv": "^17.2.3",
     "express": "^5.2.1",
-    "nodemon": "^3.1.11",
     "pg": "^8.16.3",
     "pug": "^3.0.3"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.11"
   }
 }
