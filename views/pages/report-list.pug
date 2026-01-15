@@ -11,20 +11,21 @@ block main
 					.inner-item.inner-label
 						<i class="fa-solid fa-filter"></i> Bộ lọc
 					.inner-item
-						select
+						select(id="roomType")
 							option(value="") Loại phòng
-							option(value="") Loại A
-							option(value="") Loại B
+							option(value="A") Loại A
+							option(value="B") Loại B
 					.inner-item
-						select
+						select(id="receptions")
 							option(value="") Lễ tân phụ trách
-							option(value="") Lễ tân 1
-							option(value="") Lễ tân 2
+							option(value="LT1") Lễ tân 1
+							option(value="LT2") Lễ tân 2
 					.inner-item.inner-date
-						input(type="date")
+						input(type="date" id="dateFrom")
 						span -
-						input(type="date")
-					.inner-item.inner-reset Áp dụng
+						input(type="date" id="dateTo")
+					.inner-item.inner-reset 
+						button(type="button" id="applyBtn") Áp dụng
 			//- End Section 4
 			//- Section 5
 			.section-5
@@ -69,3 +70,7 @@ block main
 				.inner-next
 					i(class="fa-solid fa-chevron-right")
 		//- End Section 6
+
+
+block scripts 
+	script(src="/assets/js/report.js")

@@ -8,6 +8,13 @@ const pool = new Pool({
   database: process.env.PGDATABASE || "postgres",
 });
 
+console.log("PGHOST:", process.env.PGHOST);
+console.log("PGPORT:", process.env.PGPORT);
+console.log("PGUSER:", process.env.PGUSER);
+console.log("PGPASSWORD:", process.env.PGPASSWORD);
+console.log("PGDATABASE:", process.env.PGDATABASE);
+
+
 pool.on("error", (err) => {
   console.error("Unexpected error on idle PostgreSQL client:", err);
   process.exit(1);

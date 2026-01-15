@@ -15,7 +15,7 @@ html(lang="vi")
 			href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" 
 			rel="stylesheet"
 			)
-		body
+	body
 		//Header 
 		include ../partials/header.pug
 		// End Header
@@ -25,4 +25,7 @@ html(lang="vi")
 		// End Sider
 
 		block main
-	script(src="/assets/js/script.js")
+
+
+		block scripts 
+			script(src="/assets/js/script.js")
