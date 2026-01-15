@@ -1,16 +1,16 @@
 const pool = require("../configs/database.config");
 const db = require("../configs/database.config");
 
+
 module.exports.list = async (req, res) => {
   try {
     const { roomName, status, roomType } = req.query;
 
     console.log(roomName, status, roomType);
 
-    //console.log("🔥 req.query =", req.query);
 
     let sqlForReport = `
-      SELECT 
+      SELECT DISTINCT
         r.room_id AS room_id,
         r.room_name,
         rt.type_name AS room_type,
@@ -46,13 +46,13 @@ module.exports.list = async (req, res) => {
 
     sqlForReport += ` ORDER BY r.room_id`;
 
-    console.log("🧠 SQL =", sqlForReport);
-    console.log("📦 VALUES =", values);
+    console.log("SQL =", sqlForReport);
+    console.log("VALUES =", values);
 
     const result = await pool.query(sqlForReport, values);
 
-    console.log("✅ ROW COUNT =", result.rowCount);
-    console.log("📄 ROWS =", result.rows);
+    console.log("ROW COUNT =", result.rowCount);
+    console.log("ROWS =", result.rows);
 
     res.render("pages/rental-list", {
       pageTitle: "Quản lý thuê phòng",
@@ -60,7 +60,7 @@ module.exports.list = async (req, res) => {
       filters: { roomName, status, roomType },
     });
   } catch (err) {
-    console.error("❌ DB error:", err);
+    console.error("DB error:", err);
     res.status(500).send("Server error");
   }
 };
@@ -131,11 +131,13 @@ module.exports.createPost = async (req, res) => {
     }
 
     const result = await client.query( 
-      `SELECT r.room_id,
-      r.room_name, 
-      rt.type_name AS room_type, 
-      rt.base_price AS price, 
-      rt.max_guests FROM rooms r LEFT JOIN room_types rt ON r.room_type_id = rt.room_type_id 
+      `SELECT 
+        r.room_id,
+        r.room_name, 
+        rt.type_name AS room_type, 
+        rt.base_price AS price, 
+        rt.max_guests 
+      FROM rooms r LEFT JOIN room_types rt ON r.room_type_id = rt.room_type_id 
       WHERE r.room_id = $1`, 
       [roomId] 
     ); 

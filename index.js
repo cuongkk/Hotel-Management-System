@@ -15,7 +15,6 @@ const indexRouter = require("./routes/index.route.js");
 const reportRouter = require("./routes/report.route.js");
 const rentalRouter = require("./routes/rental.route.js")
 
-console.log("🔥 rental router loaded");
 
 //Thiết lập thư mục chứa pug
 app.set("views", path.join(__dirname, "views"));
@@ -31,20 +30,23 @@ app.use("/", indexRouter);
 //Report  
 app.use("/report", reportRouter);
 
+//Rental
 app.use("/rental", rentalRouter)
+
+
 
 pool
   .connect()
   .then((client) => {
-    console.log("✅ Connected to PostgreSQL");
+    console.log("Connected to PostgreSQL");
     client.release();
 
     app.listen(port, () => {
-      console.log(`✅ Server running at http://localhost:${port}`);
+      console.log(`Server running at http://localhost:${port}`);
     });
 
   })
   .catch((err) => {
-    console.error("❌ Cannot connect to PostgreSQL:", err.message);
+    console.error("Cannot connect to PostgreSQL:", err.message);
     process.exit(1);
   });

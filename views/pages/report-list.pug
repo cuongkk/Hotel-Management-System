@@ -15,24 +15,25 @@ block main
 							option(value="") Loại phòng
 							option(value="A") Loại A
 							option(value="B") Loại B
+							option(value="C") Loại C
 					.inner-item
 						select(id="receptions")
 							option(value="") Lễ tân phụ trách
-							option(value="LT1") Lễ tân 1
-							option(value="LT2") Lễ tân 2
+							each r in resultReceptions
+								option(value=r.user_id)= r.full_name
 					.inner-item.inner-date
 						input(type="date" id="dateFrom")
 						span -
 						input(type="date" id="dateTo")
 					.inner-item.inner-reset 
-						button(type="button" id="applyBtn") Áp dụng
+						button(type="button" id="applyBtnForReport") Áp dụng
 			//- End Section 4
 			//- Section 5
 			.section-5
 				.inner-wrap
 					.inner-search
 						<i class="fa-solid fa-magnifying-glass"></i>
-						input(type="text" placeholder="Tìm kiếm tên phòng")
+						input(type="text" id="roomName" placeholder="Tìm kiếm tên phòng")
 					.inner-button-create
 						a(href="")  + Tạo báo cáo theo phòng
 					.inner-button-create
@@ -53,15 +54,17 @@ block main
 							th.text-left Lễ tân phụ trách
 							th.text-left Thời điểm chi trả
 					tbody 
-						tr 
-							td.text-left R001
-							td.text-left 
-								div Phòng A
-							td.text-left Loại A
-							td.text-center 1
-							td.text-left 200,000 VND
-							td.text-left Lê Văn A		
-							td.text-left 16:30 - 20/10/2024
+						if reports && reports.length > 0
+							each r in reports
+								tr 
+									td.text-left= r.slip_code
+									td.text-left 
+										div= r.room_name
+									td.text-left= r.room_type
+									td.text-center= r.payer_name
+									td.text-left= r.final_price
+									td.text-left= r.receptionist		
+									td.text-left= r.paid_at
 			.pagination
 				select(class="inner-pagination")
 					option Trang 1
