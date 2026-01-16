@@ -51,7 +51,7 @@ INSERT INTO customers (full_name, identity_card, address, phone_number, customer
 ------------------------------------------------------------------
 
 -- rental slips and rental details for testing
-INSERT INTO rental_slips (room_id, created_by, started_at, status, snap_price, snap_max_guests, snap_surcharge_coefficient, snap_surcharge_ratio)
+INSERT INTO rental_slips (room_id, created_by, started_at, status, snap_price, snap_max_guests, snap_surcharge_coefficient, snap_surcharge_ratio, snap_extra_guest_threshold)
 VALUES 
 (
     'P202', 
@@ -61,7 +61,8 @@ VALUES
     300000, 
     3,      
     1.5,   
-    0.25 
+    0.25,
+    3 
 );
 
 INSERT INTO rental_details (rental_slip_id, customer_id) VALUES
@@ -71,22 +72,23 @@ INSERT INTO rental_details (rental_slip_id, customer_id) VALUES
 ------------------------------------------------------------------
 
 -- Room P101, rented out and completed last week
-INSERT INTO rental_slips (room_id, created_by, started_at, status, snap_price, snap_max_guests, snap_surcharge_coefficient, snap_surcharge_ratio)
+INSERT INTO rental_slips (room_id, created_by, started_at, status, snap_price, snap_max_guests, snap_surcharge_coefficient, snap_surcharge_ratio, snap_extra_guest_threshold)
 VALUES 
-('P101', 2, NOW() - INTERVAL '10 days', 'COMPLETED', 150000, 3, 1.0, 0.25);
+('P101', 2, NOW() - INTERVAL '10 days', 'COMPLETED', 150000, 3, 1.0, 0.25, 3);
 
 -- Rentaled by Nguyễn Văn An
 INSERT INTO rental_details (rental_slip_id, customer_id) VALUES (2, 1);
 
 -- Create invoice for completed rental slip
-INSERT INTO invoices (rental_slip_id, created_by, payer_name, payment_date, total_days, total_amount, note)
+INSERT INTO invoices (rental_slip_id, created_by, payer_name, payment_method, payment_date, total_days, total_amount, note)
 VALUES 
 (
     2, 
     2, 
     'Nguyễn Văn An', 
+    'Thanh toán tiền mặt',
     NOW() - INTERVAL '8 days', 
     2, 
     300000, -- 150k * 2 days * ratio 1.0
-    'Thanh toán tiền mặt'
+    'Đã thanh toán bằng tiền mặt'
 );

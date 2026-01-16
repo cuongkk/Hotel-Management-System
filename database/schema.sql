@@ -123,7 +123,8 @@ CREATE TABLE rental_slips (
     snap_price DECIMAL(10, 2) NOT NULL,           
     snap_max_guests INT NOT NULL,           
     -- Get max surcharge coefficient from customer type    
-    snap_surcharge_coefficient DECIMAL(4, 2) NOT NULL DEFAULT 1.0,  
+    snap_surcharge_coefficient DECIMAL(4, 2) NOT NULL, 
+    snap_extra_guest_threshold INT NOT NULL, 
     snap_surcharge_ratio DECIMAL(4, 2) NOT NULL
 );
 
@@ -140,6 +141,7 @@ CREATE TABLE invoices (
     rental_slip_id INT UNIQUE REFERENCES rental_slips(rental_slip_id),
     created_by INT REFERENCES users(user_id),
     payer_name VARCHAR(100) NOT NULL,
+    payment_method VARCHAR(50);
     payment_date TIMESTAMP DEFAULT NOW(),
     total_days INT CHECK (total_days > 0),
     total_amount DECIMAL(15, 2) NOT NULL,
