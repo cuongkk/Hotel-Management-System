@@ -17,6 +17,9 @@ app.set("view engine", "pug");
 //Thiết lập thư mục chứa file tĩnh
 app.use(express.static(path.join(__dirname, "public")));
 
+app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
+
 app.use("/", indexRouter);
 
 pool

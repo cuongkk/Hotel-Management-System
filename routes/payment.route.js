@@ -2,8 +2,12 @@ const router = require("express").Router();
 
 const paymentController = require("../controllers/payment.controller.js");
 
-router.get("/create", paymentController.create);
+router.get("/:room_id", paymentController.payment);
 
-router.get("/detail", paymentController.detail);
+router.post("/:room_id", paymentController.processPayment);
+
+router.get("/:room_id/success", paymentController.success);
+
+router.get("/:room_id/failed", paymentController.failed);
 
 module.exports = router;
