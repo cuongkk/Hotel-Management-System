@@ -1168,7 +1168,10 @@ h1.box-title {
   background-color: #fff;
   border-radius: 14px;
   padding: 80px;
-  text-align: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 }
 
 .section-10 .inner-image {

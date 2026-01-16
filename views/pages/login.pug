@@ -7,12 +7,12 @@ block main
     .inner-desc Vui lòng nhập email và mật khẩu để tiếp tục
     form(action="" class="inner-form" id="login-form")
       .inner-group
-        label(for="email") Email * 
+        label(for="username") Username * 
         input(
-          type="email" 
-          id="email" 
-          name="email" 
-          placeholder="Ví dụ: levana@gmail.com"
+          type="text" 
+          id="username" 
+          name="username" 
+          placeholder="Ví dụ: levanam"
           class="inner-control")
       .inner-group
         label(for="password") Mật khẩu *
@@ -28,8 +28,5 @@ block main
             for="remember"
 						name="remember"
           ) Nhớ mật khẩu
-        a(href=`/${pathAdmin}/account/forgot-password` class="inner-link") Quên mật khẩu?
+        a(href=`/account/forgotPassword` class="inner-link") Quên mật khẩu?
       button.inner-button Đăng nhập
-      .inner-more
-        span Bạn chưa có tài khoản?
-        a(href=`/${pathAdmin}/account/register` class="inner-link") Tạo tài khoản
