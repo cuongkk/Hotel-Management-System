@@ -5,19 +5,15 @@ document.addEventListener("DOMContentLoaded", () => {
   if (!btn) return;
 
   btn.addEventListener("click", () => {
-    const roomName = document.getElementById("roomNameInput")?.value.trim();
-    const status = document.getElementById("status")?.value;
-    const roomType = document.getElementById("roomTypeSelect")?.value;
-
-    console.log(roomName, status, roomType);
+    const roomName = document.getElementById("roomName")?.value.trim();
+    const roomType = document.getElementById("roomType")?.value;
 
     const params = new URLSearchParams();
 
     if (roomName) params.append("roomName", roomName);
-    if (status) params.append("status", status);
     if (roomType) params.append("roomType", roomType);
 
-    window.location.href = `/rental/list?${params.toString()}`;
+    window.location.href = `/report/list?${params.toString()}`;
   });
 });
 
@@ -77,8 +73,7 @@ document.addEventListener("DOMContentLoaded", () => {
       });
 
       const payload = { roomId, roomName, roomType, price, startDate, customers };
-
-      console.log("Dữ liệu chuẩn bị gửi:", payload); 
+ 
       const response = await fetch("/rental/create", { 
         method: "POST", 
         headers: { "Content-Type": "application/json" }, 

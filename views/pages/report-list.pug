@@ -16,15 +16,6 @@ block main
 							option(value="A") Loại A
 							option(value="B") Loại B
 							option(value="C") Loại C
-					.inner-item
-						select(id="receptions")
-							option(value="") Lễ tân phụ trách
-							each r in resultReceptions
-								option(value=r.user_id)= r.full_name
-					.inner-item.inner-date
-						input(type="date" id="dateFrom")
-						span -
-						input(type="date" id="dateTo")
 					.inner-item.inner-reset 
 						button(type="button" id="applyBtnForReport") Áp dụng
 			//- End Section 4
@@ -40,40 +31,24 @@ block main
 						a(href="")  + Thêm báo cáo theo loại phòng
 			//- End Section 5
 
-		//- Section 6
-		.section-6 
-			.table-2 
-				table 
-					thead 
-						tr
-							th.text-left Mã hóa đơn
-							th.text-left Tên phòng
-							th.text-left Loại phòng 
-							th.text-center Khách thanh toán
-							th.text-center Thành tiền
-							th.text-left Lễ tân phụ trách
-							th.text-left Thời điểm chi trả
-					tbody 
-						if reports && reports.length > 0
-							each r in reports
-								tr 
-									td.text-left= r.slip_code
-									td.text-left 
-										div= r.room_name
-									td.text-left= r.room_type
-									td.text-center= r.payer_name
-									td.text-left= r.final_price
-									td.text-left= r.receptionist		
-									td.text-left= r.paid_at
-			.pagination
-				select(class="inner-pagination")
-					option Trang 1
-					option Trang 2
-					option Trang 3
-				.inner-next
-					i(class="fa-solid fa-chevron-right")
-		//- End Section 6
+
+		.section-7
+			- let title = "Biểu đồ doanh thu"
+			if roomType
+				- title += `: loại phòng ${roomType}`
+			if roomName
+				- title += `, theo phòng ${roomName}`
+			h2.box-title= title
+			canvas(id="roomTypeChart" width="400" height="200")
 
 
-block scripts 
-	script(src="/assets/js/report.js")
+
+block scripts
+	script.
+		const reportsData = !{reportsJson};
+		console.log("reportsData ở frontend:", reportsData);
+
+	script(src="/assets/js/script.js")
+	script(src="https://cdn.jsdelivr.net/npm/chart.js")
+	script(src="/assets/js/chart.js")
+

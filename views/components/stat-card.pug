@@ -1,0 +1,14 @@
+mixin stat-card(title='Title', orientation='vertical', value='0', icon='fa-solid fa-xmark', color='bg-white', colorIcon='text-black')
+    - const isVertical = orientation === 'vertical'
+    - const hasIcon = icon && icon !== 'none'
+    - const cardFlex = isVertical ? 'flex-col items-center text-center' : 'flex-row justify-center items-center'
+
+    div(class=`flex flex-1 min-w-64 ${cardFlex} bg-white rounded-xl shadow-md transition-all duration-300 ease-out hover:shadow-lg hover:bg-gradient-to-b hover:from-blue-100 hover:to-white p-8`)
+    
+        if hasIcon
+            div(class=`flex justify-center items-center w-12 h-12 ${color} rounded-full shadow-sm ${colorIcon} text-2xl`)
+                i(class=icon)
+
+        div(class=`flex flex-col ` + (isVertical ? `mt-4` : `ml-4`))
+            p(class="text-gray-500 text-sm font-medium mb-1")= title
+            h3(class="font-bold text-gray-800 " + (isVertical ? "text-3xl" : "text-2xl"))= value

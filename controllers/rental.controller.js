@@ -6,9 +6,6 @@ module.exports.list = async (req, res) => {
   try {
     const { roomName, status, roomType } = req.query;
 
-    console.log(roomName, status, roomType);
-
-
     let sqlForReport = `
       SELECT DISTINCT
         r.room_id AS room_id,
@@ -46,13 +43,7 @@ module.exports.list = async (req, res) => {
 
     sqlForReport += ` ORDER BY r.room_id`;
 
-    console.log("SQL =", sqlForReport);
-    console.log("VALUES =", values);
-
     const result = await pool.query(sqlForReport, values);
-
-    console.log("ROW COUNT =", result.rowCount);
-    console.log("ROWS =", result.rows);
 
     res.render("pages/rental-list", {
       pageTitle: "Quản lý thuê phòng",
@@ -69,9 +60,6 @@ module.exports.createPost = async (req, res) => {
   const client = await db.pool.connect();
   try {
     const { roomId, roomName, roomType, price, startDate, customers } = req.body;
-
-    console.log("Thông tin phòng:", roomName, roomType, price, startDate);
-    console.log("Danh sách khách:", customers);
 
     let finalPrice = parseFloat(price);
     if (customers.length > 2) finalPrice *= 1.25;
@@ -193,8 +181,3 @@ module.exports.createGet = async (req, res) => {
   }
 };
 
-module.exports.detail = (req, res) => {
-  res.render("pages/rental-detail.pug", {
-    pageTitle: "Xem hóa đơn",
-  });
-};
