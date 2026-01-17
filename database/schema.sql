@@ -8,7 +8,7 @@ CREATE TABLE users (
     username VARCHAR(50) UNIQUE NOT NULL,
     password_hash VARCHAR(255) NOT NULL,
     full_name VARCHAR(100) NOT NULL,
-    role user_role DEFAULT 'staff',
+    role user_role DEFAULT 'STAFF',
     is_active BOOLEAN DEFAULT TRUE,
     created_at TIMESTAMP DEFAULT NOW()
 );
@@ -53,7 +53,7 @@ CREATE TABLE rooms (
     room_id VARCHAR(10) PRIMARY KEY,
     room_name VARCHAR(100) NOT NULL,
     room_type_id INT REFERENCES room_types(room_type_id),
-    status room_status DEFAULT 'available',
+    status room_status DEFAULT 'AVAILABLE',
     note TEXT
 );
 
@@ -117,7 +117,7 @@ CREATE TABLE rental_slips (
     room_id VARCHAR(10) REFERENCES rooms(room_id),
     created_by INT REFERENCES users(user_id),
     started_at TIMESTAMP DEFAULT NOW(),
-    status rental_status DEFAULT 'active',
+    status rental_status DEFAULT 'ACTIVE',
 
     -- SNAPSHOT FIELDS 
     snap_price DECIMAL(10, 2) NOT NULL,           

@@ -5,17 +5,27 @@
   "author": "Nguyễn Tuấn Cường <ntuancuong2005@gmail.com>",
   "license": "MIT",
   "scripts": {
-    "dev": "nodemon index.js",
-    "start": "node --inspect index.js"
+    "start": "node --inspect index.js",
+    "watch:css": "tailwindcss -i ./src/input.css -o ./public/assets/css/tailwind.css --watch",
+    "dev": "concurrently \"yarn start\" \"yarn watch:css\""
   },
   "dependencies": {
+    "bcryptjs": "^3.0.3",
     "bug": "^1.2.0",
+    "cookie-parser": "^1.4.7",
     "dotenv": "^17.2.3",
     "express": "^5.2.1",
-    "pg": "^8.16.3",
-    "pug": "^3.0.3"
+    "jsonwebtoken": "^9.0.3",
+    "nodemailer": "^7.0.12",
+    "pg": "^8.17.1",
+    "pg-hstore": "^2.3.4",
+    "pug": "^3.0.3",
+    "sequelize": "^6.37.7"
   },
   "devDependencies": {
-    "nodemon": "^3.1.11"
+    "@tailwindcss/cli": "^4.1.18",
+    "concurrently": "^9.2.1",
+    "nodemon": "^3.1.11",
+    "tailwindcss": "^4.1.18"
   }
 }

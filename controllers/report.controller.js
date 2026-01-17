@@ -48,4 +48,5 @@ module.exports.listGetReport = async (req, res) => {
     console.error("DB error:", err);
     res.status(500).send("Server error");
   }
+
 };
