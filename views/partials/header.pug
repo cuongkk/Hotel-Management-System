@@ -1,5 +1,5 @@
 header.header
-	a(href='' class="inner-left") Quản lý khách sạn 
+	a(href='/dashboard' class="inner-left") Quản lý khách sạn 
 	.inner-right
 		button.inner-button
 			.inner-icon 
@@ -7,8 +7,8 @@ header.header
 			.inner-tick
 		.inner-profile 
 			.inner-inf 
-				.inner-name Nguyễn Văn A 
-				.inner-role Admin
+				.inner-name #{account.full_name}
+				.inner-role #{account.role}
 			.inner-logo
 		.inner-menu 
 			<i class="fa-solid fa-bars"></i>

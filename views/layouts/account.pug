@@ -2,12 +2,14 @@ doctype html
 html(lang="vi")
 	head
 		title #{pageTitle}
+		script. 
+			const pathAdmin = "#{pathAdmin}";
 		meta(charset="UTF-8")
 		meta(
 			content="width=device-width, initial-scale=1.0" 
 			name="viewport"
 			)
-		title #{pageTitle}
+		link(rel="stylesheet", href="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.css")
 		link(
 			href="/assets/css/style.css" 
 			rel="stylesheet"
@@ -19,4 +21,8 @@ html(lang="vi")
 	body
 		.page-account
 			block main
+	script(src="https://unpkg.com/just-validate@latest/dist/just-validate.production.min.js")
+	script(src="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.js")
+	script(src="/assets/js/notify.js")
+	script(src="/assets/js/validate.js")
 	script(src="/assets/js/script.js")

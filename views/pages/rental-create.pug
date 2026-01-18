@@ -3,25 +3,24 @@ include ../mixins/checkbox-30.pug
 
 block main
 	main.main
-		h1.box-title Lập phiếu thuê phòng
+		h1.box-title Lập phiếu thuê phòng: #{room.room_id}
 		.section-8
 			form(action="" id="rental-create-form")
+				input(type="hidden" id="roomId" name="roomId" value=room.room_id)
 				.inner-group 
-					label.inner-label(for="name") Tên phòng
-					input(type="text" id="name" name="name" placeholder="Nhập tên phòng")
+					label.inner-label(for="roomName") Tên phòng
+					input(type="text" id="roomName" name="roomName" value=room.room_name readonly)
 				.inner-group 
-					label.inner-label(for="type") Loại phòng
-					select(id="type" name="type")
-						option(value="") Loại A
-						option(value="") Loại B
+					label.inner-label(for="roomType") Loại phòng
+					input(type="text" id="roomType" name="roomType" value=room.room_type readonly)
 				.inner-group 
 					label.inner-label(for="price") Đơn giá
-					input(type="text" id="price" name="price" placeholder="Nhập giá phòng")
+					input(type="text" id="price" name="price" value=`${room.price.toLocaleString()} VND` readonly)
 				.inner-group 
 					label.inner-label(for="startDate") Ngày bắt đầu thuê
 					input(type="date" id="startDate" name="startDate" placeholder="Nhập ngày bắt đầu thuê")
 				.inner-group.inner-two-col
-					label.inner-label(for="note") Thông tin khách hàng
+					label.inner-label Thông tin khách hàng
 					table.inner-table
 						thead
 							tr  
@@ -34,18 +33,49 @@ block main
 							tr  
 								td 1
 								td 
-									input(type="text")
+									input(type="text" name="customers[0][name]")
 								td 
-									select
-										option(value="") Nội địa
-										option(value="") Nước ngoài
+									select(name="customers[0][type]")
+										option(value="DOM") Nội địa
+										option(value="FOR") Nước ngoài
 								td 
-									input(type="text")
+									input(type="text" name="customers[0][idCard]")
 								td 
-									input(type="text")
+									input(type="text" name="customers[0][phone]")
+
+					table.inner-table
+						tbody
+							tr  
+								td 2
+								td 
+									input(type="text" name="customers[1][name]")
+								td 
+									select(name="customers[1][type]")
+										option(value="Nội địa") Nội địa
+										option(value="Nước ngoài") Nước ngoài
+								td 
+									input(type="text" name="customers[1][idCard]")
+								td 
+									input(type="text" name="customers[1][phone]")
+
+					table.inner-table
+						tbody
+							tr  
+								td 3
+								td 
+									input(type="text" name="customers[2][name]")
+								td 
+									select(name="customers[2][type]")
+										option(value="Nội địa") Nội địa
+										option(value="Nước ngoài") Nước ngoài
+								td 
+									input(type="text" name="customers[2][idCard]")
+								td 
+									input(type="text" name="customers[2][phone]")
 				.inner-button.inner-two-col(style="display: flex; justify-content: space-between;")
-					button(style="color: black; background-color: #FFAAAA;") Hủy bỏ
-					button Lưu
+					button(type="button" style="color: black; background-color: #FFAAAA;") Hủy bỏ
+					button(type="submit" id="saveBtn") Lưu
+
 			.inner-back 
 				a(href=`/${pathAdmin}/tour/list`) Quay lại danh sách
 		

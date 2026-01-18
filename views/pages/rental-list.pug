@@ -11,24 +11,30 @@ block main
 					.inner-item.inner-label
 						<i class="fa-solid fa-filter"></i> Bộ lọc
 					.inner-item
-						select
+						select(id="statusSelect")
 							option(value="") Trạng thái
-							option(value="") Hoạt động
-							option(value="") Đang tạo
-							option(value="") Tạm dừng
+							option(value="AVAILABLE") Hoạt động
+							option(value="OCCUPIED") Đang tạo
+							option(value="MAINTENANCE") Tạm dừng
 					.inner-item
-						select
+						select(id="roomTypeSelect")
 							option(value="") Loại phòng
-							option(value="") Loại A
-							option(value="") Loại B
-					.inner-item.inner-reset Áp dụng
+							option(value="A") Loại A
+							option(value="B") Loại B
+
+					.inner-item.inner-reset
+						button(type="button" id="applyBtn") Áp dụng
 			//- End Section 4
 			//- Section 5
 			.section-5
 				.inner-wrap
 					.inner-search
-						<i class="fa-solid fa-magnifying-glass"></i>
-						input(type="text" placeholder="Tìm kiếm tên phòng")
+						i.fa-solid.fa-magnifying-glass
+						input(
+							type="text"
+							id="roomNameInput"
+							placeholder="Tìm kiếm tên phòng"
+						)
 			//- End Section 5
 
 		//- Section 6
@@ -45,25 +51,34 @@ block main
 							th.text-center Trạng thái
 							th.text-left Lễ tân phụ trách
 							th.text-left Hành động
-					tbody 
-						tr 
-							td.text-left R001
-							td.text-left 
-								div Phòng A
-							td.text-left Loại A
-							td.text-center 1
-							td.text-left 200,000 VND
-							td.text-center
-								.status.status-green Hoạt động 
-							td.text-left
-								div Lê Văn A
-							td.text-left
-								.box-actions 
-									a(href="#" class="inner-edit")
-										<i class="fa-solid fa-pen-to-square"></i>
-									a(href="#" class="inner-remove")
-										<i class="fa-solid fa-trash-can"></i>
 						
+					tbody
+						if rooms && rooms.length
+							each room in rooms
+								tr
+									td.text-left= room.room_id
+									td.text-left= room.room_name
+									td.text-left= room.room_type
+									td.text-center= room.max_guest
+									td.text-left #{room.price.toLocaleString()} VND
+									td.text-center
+										if room.status === "AVAILABLE"
+											span.status.status-green Hoạt động
+										else if room.status === "OCCUPIED"
+											span.status.status-yellow Đang tạo
+										else
+											span.status.status-red Tạm dừng
+									td.text-left= room.receptionist || "—"
+									td.text-left
+										.box-actions
+											a.inner-edit(href=`/rental/create?roomId=${room.room_id}`)
+												i.fa-solid.fa-pen-to-square
+											a.inner-remove(href=`/rental/delete`)
+												i.fa-solid.fa-trash-can
+						else
+							tr
+							td(colspan="8" style="text-align:center") Không có dữ liệu
+
 			.pagination
 				select(class="inner-pagination")
 					option Trang 1
@@ -72,3 +87,6 @@ block main
 				.inner-next
 					i(class="fa-solid fa-chevron-right")
 		//- End Section 6
+
+block scripts
+	script(src="/assets/js/script.js")

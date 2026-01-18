@@ -3,51 +3,60 @@ include ../mixins/checkbox-30.pug
 
 block main
 	main.main 
-		h1.box-title Quản lý phòng
+		h1.box-title Quản lý khách hàng
+
 		.main1
-			//- Section 4
 			.section-4
-				.inner-wrap(style="display: grid; grid-template-columns: repeat(3, 1fr);")
-					.inner-item(style="justify-content: center") Tên
-					.inner-item(style="justify-content: center") CCCD
-					.inner-item(style="justify-content: center") Số điện thoại
-			//- End Section 4
-			//- Section 5
+				.inner-wrap(style="display: grid; grid-template-columns: repeat(2, 1fr);")
+					button.inner-item(class="filter-btn active" data-by="name" style="justify-content: center") Tên
+					button.inner-item(class="filter-btn" data-by="phone" style="justify-content: center") Số điện thoại
+
 			.section-5
 				.inner-wrap
-					.inner-search
-						<i class="fa-solid fa-magnifying-glass"></i>
-						input(type="text" placeholder="Tìm kiếm tên phòng")
+					form#staffSearchForm.inner-search(action="/staff/find" method="get")
+						button.fa-solid.fa-magnifying-glass(type="submit")
+						input#qInput(type="text" name="q" value=(q || "") placeholder="Nhập để tìm..." autocomplete="off")
+						input#byInput(type="hidden" name="by" value=(by || "name"))
+						input(type="hidden" name="page" value="1")
+						input(type="hidden" name="pageSize" value=(pageSize || 10))
 					.inner-button-create
-						a(href="")  + Thêm nhân viên
-			//- End Section 5
+						a(href="/staff/create") + Thêm khách hàng
 
-		//- Section 6
 		.section-6 
 			.table-2 
 				table 
 					thead 
 						tr
 							th.text-left Mã nhân viên
-							th.text-left Tên nhân viên
-							th.text-left Chức vụ
-							th.text-center CCCD
-							th.text-center SĐT
-							th.text-center Địa chỉ
-					tbody 
-						tr 
-							td.text-left LT001
-							td.text-left 
-								div Nhân viên A
-							td.text-left Lễ tân
-							td.text-center 123456789
-							td.text-center 0123456789
-							td.text-center 123 Đường A, Phường B, Quận C
-			.pagination
-				select(class="inner-pagination")
-					option Trang 1
-					option Trang 2
-					option Trang 3
-				.inner-next
-					i(class="fa-solid fa-chevron-right")
-		//- End Section 6
+							th.text-left Họ tên nhân viên
+							th.text-center Tên đăng nhập
+							th.text-center Số điện thoại
+							th.text-center Vai trò
+							th.text-center Trạng thái
+					tbody
+						if !staffs || staffs.length === 0
+							tr
+								td(colspan="6" style="text-align:center") Không có nhân viên
+						else
+							each s in staffs
+								tr
+									td.text-left= s.user_id
+									td.text-left= s.full_name
+									td.text-center= s.username
+									td.text-center= s.phone_number
+									td.text-center= s.role
+									td.text-center= s.is_active ? "Hoạt động" : "Khóa"
+		.pagination
+			select.inner-pagination(onchange="location.href=this.value")
+				- for (let p = 1; p <= totalPages; p++)
+					option(
+						value=`/staff/find?by=${encodeURIComponent(by || 'name')}&q=${encodeURIComponent(q || '')}&page=${p}&pageSize=${pageSize}`
+						selected=(p === page)
+					) Trang #{p}
+			.inner-next
+				if page > 1
+					a(href=`/staff/find?by=${encodeURIComponent(by || 'name')}&q=${encodeURIComponent(q || '')}&page=${page - 1}&pageSize=${pageSize}`)
+						i.fa-solid.fa-chevron-left
+				if page < totalPages
+					a(href=`/staff/find?by=${encodeURIComponent(by || 'name')}&q=${encodeURIComponent(q || '')}&page=${page + 1}&pageSize=${pageSize}`)
+						i.fa-solid.fa-chevron-right

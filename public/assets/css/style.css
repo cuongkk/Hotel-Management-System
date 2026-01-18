@@ -27,6 +27,24 @@ textarea {
   border: none;
 }
 
+.filter-btn.active {
+  background: #4880ff;
+  color: #ffffff !important;
+  overflow: hidden;
+}
+
+/* Just Validate */
+
+.just-validate-error-field {
+  border-color: red !important;
+}
+
+.just-validate-success-field {
+  border-color: green !important;
+}
+
+/* End-Just Validate */
+
 /* Page-account */
 
 .page-account {
@@ -623,6 +641,7 @@ h1.box-title {
   border: 1px solid #d5d5d5;
   background-color: #fff;
   border-radius: 14px;
+  overflow: hidden;
 }
 
 .section-4 .inner-item {
@@ -1168,7 +1187,10 @@ h1.box-title {
   background-color: #fff;
   border-radius: 14px;
   padding: 80px;
-  text-align: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 }
 
 .section-10 .inner-image {
@@ -1642,7 +1664,9 @@ h1.box-title {
   stroke-linejoin: round;
   stroke-width: 2px;
   top: 0;
-  transition: stroke-dasharray var(--dur), stroke-dashoffset var(--dur);
+  transition:
+    stroke-dasharray var(--dur),
+    stroke-dashoffset var(--dur);
 }
 
 .checkbox-wrapper-30 .checkbox svg,
