@@ -59,7 +59,7 @@ PGDATABASE=QLKhachSan
 ---
 
 ## 5. Cấu trúc project
-
+<pre>
 Hotel-Management-System/
 ├── index.js
 ├── package.json
@@ -73,7 +73,7 @@ Hotel-Management-System/
 ├── views/ (Pug)
 ├── public/ (CSS, Images)
 └── README.md
-
+</pre>
 ---
 
 ## 6. Chạy hệ thống
