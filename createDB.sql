@@ -18,11 +18,21 @@ CREATE TYPE user_role AS ENUM ('ADMIN', 'MANAGER','STAFF');
 CREATE TABLE users (
     user_id SERIAL PRIMARY KEY,
     username VARCHAR(50) UNIQUE NOT NULL,
+		email VARCHAR(100) UNIQUE NOT NULL,
     password_hash VARCHAR(255) NOT NULL,
     full_name VARCHAR(100) NOT NULL,
-	role user_role NOT NULL DEFAULT 'STAFF',
+		phone_number VARCHAR(15),
+		role user_role NOT NULL DEFAULT 'STAFF',
     is_active BOOLEAN DEFAULT TRUE,
     created_at TIMESTAMP DEFAULT NOW()
+);
+
+CREATE TABLE IF NOT EXISTS password_reset_otps (
+  id SERIAL PRIMARY KEY,
+  email VARCHAR(100) NOT NULL,
+  otp VARCHAR(10) NOT NULL,
+  expire_at TIMESTAMP NOT NULL,
+  created_at TIMESTAMP NOT NULL DEFAULT NOW()
 );
 
 -- =============================================
@@ -161,6 +171,8 @@ CREATE TABLE invoices (
 -- =============================================
 -- 6. INDEXES FOR PERFORMANCE
 -- =============================================
+CREATE UNIQUE INDEX IF NOT EXISTS uq_password_reset_otps_email ON password_reset_otps(email);
+CREATE INDEX IF NOT EXISTS idx_password_reset_otps_expire_at ON password_reset_otps(expire_at);
 CREATE INDEX idx_rentals_room ON rental_slips(room_id);
 CREATE INDEX idx_rentals_status ON rental_slips(status);
 CREATE INDEX idx_customers_identity ON customers(identity_card);

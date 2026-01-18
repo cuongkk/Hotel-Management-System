@@ -13,13 +13,13 @@ const profileRouter = require("./profile.route.js");
 const authMiddleware = require("../middlewares/auth.middleware.js");
 
 router.use("/account", accountRouter);
-router.use("/dashboard", authMiddleware.verifyToken, dashboardRouter);
-router.use("/room", authMiddleware.verifyToken, roomRouter);
-router.use("/rental", authMiddleware.verifyToken, rentalRouter);
-router.use("/report", authMiddleware.verifyToken, reportRouter);
-router.use("/payment", authMiddleware.verifyToken, paymentRouter);
-router.use("/admin", authMiddleware.verifyToken, adminRouter);
-router.use("/staff", authMiddleware.verifyToken, staffRouter);
+router.use("/dashboard", authMiddleware.verifyToken, authMiddleware.requireRole("ADMIN", "MANAGER", "STAFF"), dashboardRouter);
+router.use("/room", authMiddleware.verifyToken, authMiddleware.requireRole("MANAGER"), roomRouter);
+router.use("/rental", authMiddleware.verifyToken, authMiddleware.requireRole("MANAGER", "STAFF"), rentalRouter);
+router.use("/report", authMiddleware.verifyToken, authMiddleware.requireRole("MANAGER"), reportRouter);
+router.use("/payment", authMiddleware.verifyToken, authMiddleware.requireRole("MANAGER", "STAFF"), paymentRouter);
+router.use("/admin", authMiddleware.verifyToken, authMiddleware.requireRole("ADMIN", "MANAGER"), adminRouter);
+router.use("/staff", authMiddleware.verifyToken, authMiddleware.requireRole("MANAGER"), staffRouter);
 router.use("/profile", authMiddleware.verifyToken, profileRouter);
 
 router.use(authMiddleware.verifyToken, (req, res) => {

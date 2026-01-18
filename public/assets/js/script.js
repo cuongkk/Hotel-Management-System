@@ -14,10 +14,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
     const menu = document.querySelector(".sider .inner-menu");
 
-    console.log(menu);
     const role = menu.dataset.role;
-
-    console.log(role);
 
     if (role === "STAFF") {
       menuList.forEach((item) => {
@@ -39,6 +36,53 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 //End sider
 
+// Filter Staff
+
+document.addEventListener("DOMContentLoaded", () => {
+  const buttons = document.querySelectorAll(".filter-btn");
+  const byInput = document.getElementById("byInput");
+  const qInput = document.getElementById("qInput");
+
+  if (!buttons.length || !byInput || !qInput) return;
+
+  const setMode = (by) => {
+    buttons.forEach((btn) => btn.classList.toggle("active", btn.dataset.by === by));
+    byInput.value = by;
+
+    if (by === "name") qInput.placeholder = "Nhập tên để tìm...";
+    if (by === "phone") qInput.placeholder = "Nhập số điện thoại để tìm...";
+  };
+
+  buttons.forEach((btn) => {
+    btn.addEventListener("click", () => {
+      document.querySelector('input[name="page"]').value = "1";
+      setMode(btn.dataset.by);
+      qInput.focus();
+    });
+  });
+
+  setMode(byInput.value || "name");
+});
+// End Filter Staff
+
+// Menu Mobile
+const buttonMenuMobile = document.querySelector(".header .inner-menu");
+
+if (buttonMenuMobile) {
+  const sider = document.querySelector(".sider");
+  const overlay = document.querySelector(".inner-overlay");
+
+  buttonMenuMobile.addEventListener("click", function () {
+    sider.classList.add("active");
+    overlay.classList.add("active");
+  });
+
+  overlay.addEventListener("click", function () {
+    sider.classList.remove("active");
+    overlay.classList.remove("active");
+  });
+}
+// End Menu Mobile
 document.addEventListener("DOMContentLoaded", () => {
   const btn = document.getElementById("applyBtn");
   if (!btn) return;
@@ -46,8 +90,6 @@ document.addEventListener("DOMContentLoaded", () => {
   btn.addEventListener("click", () => {
     const roomName = document.getElementById("roomNameInput")?.value.trim();
     const roomType = document.getElementById("roomTypeSelect")?.value;
-
-    console.log(roomName, status, roomType);
 
     const params = new URLSearchParams();
 
@@ -65,7 +107,6 @@ document.addEventListener("DOMContentLoaded", () => {
     e.preventDefault();
 
     const roomId = document.getElementById("roomId").value;
-    console.log(roomId);
     const roomName = document.getElementById("roomName").value;
     const roomType = document.getElementById("roomType").value;
     const price = document.getElementById("price").value;
@@ -91,7 +132,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const payload = { roomId, roomName, roomType, price, startDate, customers };
 
-    console.log("Dữ liệu chuẩn bị gửi:", payload);
     const response = await fetch("/rental/create", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
