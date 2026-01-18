@@ -39,7 +39,7 @@ block main
 						<i class="fa-solid fa-magnifying-glass"></i>
 						input(type="text" placeholder="Tìm kiếm tên phòng")
 					.inner-button-create
-						a(href="")  + Thêm phòng
+						a(href="room/create")  + Thêm phòng
 			//- End Section 5
 
 		//- Section 6
@@ -56,24 +56,28 @@ block main
 							th.text-center Trạng thái
 							th.text-left Lễ tân phụ trách
 							th.text-left Hành động
-					tbody 
-						tr 
-							td.text-left R001
-							td.text-left 
-								div Phòng A
-							td.text-left Loại A
-							td.text-center 1
-							td.text-left 200,000 VND
-							td.text-center
-								.status.status-green Hoạt động 
-							td.text-left
-								div Lê Văn A
-							td.text-left
-								.box-actions 
-									a(href="#" class="inner-edit")
-										<i class="fa-solid fa-pen-to-square"></i>
-									a(href="#" class="inner-remove")
-										<i class="fa-solid fa-trash-can"></i>
+					tbody
+						if rooms && rooms.length
+							each room in rooms
+								tr
+									td.text-left= room.room_id
+									td.text-left
+										div= room.room_name
+									td.text-left= room.room_type_id
+									td.text-center A
+									td.text-left 200,000 VND
+									td.text-center= room.status
+									td.text-left
+										div —
+									td.text-left
+										.box-actions
+											a(href=`/room/update/${room.room_id}` class="inner-edit")
+												i.fa-solid.fa-pen-to-square
+											a(href=`/room/delete/${room.room_id}` class="inner-remove")
+												i.fa-solid.fa-trash-can
+						else
+							tr
+								td(colspan="8" style="text-align:center") Không có phòng nào
 						
 			.pagination
 				select(class="inner-pagination")

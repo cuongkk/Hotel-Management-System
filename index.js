@@ -1,6 +1,6 @@
 const express = require("express");
 require("dotenv").config();
-
+console.log("JWT_SECRET_KEY =", process.env.JWT_SECRET_KEY);
 const { pool, query } = require("./configs/database.config.js");
 const { pathAdmin } = require("./configs/variable.config");
 const path = require("path");

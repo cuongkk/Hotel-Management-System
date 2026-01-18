@@ -7,7 +7,7 @@
   "scripts": {
     "start": "node --inspect index.js",
     "watch:css": "tailwindcss -i ./src/input.css -o ./public/assets/css/tailwind.css --watch",
-    "dev": "concurrently \"yarn start\" \"yarn watch:css\""
+    "dev": "concurrently \"npm run start\" \"npm run watch:css\""
   },
   "dependencies": {
     "bcryptjs": "^3.0.3",
