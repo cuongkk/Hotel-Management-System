@@ -61,7 +61,6 @@ PGDATABASE=QLKhachSan
 ## 5. Cấu trúc project
 
 Hotel-Management-System/
-│
 ├── index.js
 ├── package.json
 ├── yarn.lock
