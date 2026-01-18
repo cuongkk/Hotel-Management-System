@@ -2,34 +2,33 @@ extends ../layouts/default.pug
 include ../mixins/checkbox-30.pug
 
 block main
-	main.main
-		h1.box-title Thông tin cá nhân
-		.section-8
-			form(action="" id="room-create-form")
-				.inner-group 
-					label.inner-label(for="name") Họ tên
-					input(type="text" id="name" name="name" value="")
-					button.inner-change
-						<i class="fa-solid fa-pen-to-square"></i>
-				.inner-group 
-					label.inner-label(for="email") Email
-					input(type="text" id="email" name="email" value="")
-					button.inner-change
-						<i class="fa-solid fa-pen-to-square"></i>
-				.inner-group 
-					label.inner-label(for="phone") Số điện thoại
-					input(type="text" id="phone" name="phone" value="")
-					button.inner-change
-						<i class="fa-solid fa-pen-to-square"></i>
-				.inner-group 
-					label.inner-label(for="position") Chức vụ
-					input(type="text" id="position" name="position" value="")
-				.inner-group.inner-two-col
-					label.inner-label(for="avatar") Ảnh đại diện
-					.inner-upload-image
-						input(type="file" id="avatar" name="avatar" filepond-image)
-				.inner-button.inner-two-col
-					button Cập nhật
-			.inner-back 
-				a(href="") Đổi mật khẩu
-		
+  main.main
+    h1.box-title Thông tin cá nhân
+    .section-8
+      form#profile-form(action="" method="post")
+        .inner-group
+          label.inner-label(for="name") Họ tên
+          input(type="text" id="name" name="name" value=(profile.full_name || "") disabled)
+        .inner-group
+          label.inner-label(for="email") Email
+          .inner-row(style="display:flex; gap:8px; align-items:center;")
+            input(type="text" id="email" name="email" value=(profile.email || "") disabled)
+            button.inner-change(type="button" data-field="email")
+              i.fa-solid.fa-pen-to-square
+        .inner-group
+          label.inner-label(for="phone") Số điện thoại
+          .inner-row(style="display:flex; gap:8px; align-items:center;")
+            input(type="text" id="phone" name="phone" value=(profile.phone_number || "") disabled)
+            button.inner-change(type="button" data-field="phone")
+              i.fa-solid.fa-pen-to-square
+        .inner-group
+          label.inner-label(for="position") Chức vụ
+          input(type="text" id="position" name="position" value=(profile.role || "") disabled)
+        .inner-group.inner-two-col
+          label.inner-label(for="avatar") Ảnh đại diện
+          .inner-upload-image
+            input(type="file" id="avatar" name="avatar" filepond-image)
+        .inner-button.inner-two-col
+          button(type="submit") Cập nhật
+      .inner-back
+        a(href="/profile/change-password") Đổi mật khẩu

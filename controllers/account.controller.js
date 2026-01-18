@@ -52,12 +52,13 @@ module.exports.loginPost = async (req, res) => {
 
     const token = jwt.sign(
       {
+        user_id: existAccount.user_id,
         username: existAccount.username,
         role: existAccount.role,
         type: "auth",
       },
       process.env.JWT_SECRET_KEY,
-      { expiresIn: rememberPassword ? "30d" : "7d" }
+      { expiresIn: rememberPassword ? "30d" : "7d" },
     );
 
     res.cookie("token", token, {
@@ -153,10 +154,10 @@ module.exports.otpPasswordPost = async (req, res) => {
 
     const token = jwt.sign({ user_id: existAccount.user_id, email: existAccount.email, type: "reset" }, process.env.JWT_SECRET_KEY, { expiresIn: "1h" });
 
-    res.cookie("token", token, {
+    res.cookie("resetToken", token, {
       maxAge: 60 * 60 * 1000,
       httpOnly: true,
-      sameSite: "strict",
+      sameSite: "lax",
     });
 
     return res.json({ result: "success", message: "Xác thực OTP thành công" });
@@ -178,6 +179,7 @@ module.exports.resetPasswordPost = async (req, res) => {
     }
 
     const { email, type } = req.account || {};
+    console.log("resetPasswordPost account:", req.account);
     if (!email || type !== "reset") {
       return res.status(401).json({ result: "error", message: "Token không hợp lệ hoặc không đúng mục đích" });
     }
@@ -185,7 +187,7 @@ module.exports.resetPasswordPost = async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, 10);
     await userModel.updatePasswordByEmail(email, hashedPassword);
 
-    res.clearCookie("token");
+    res.clearCookie("resetToken");
     return res.json({ result: "success", message: "Đặt lại mật khẩu thành công" });
   } catch (err) {
     console.error("resetPasswordPost error:", err);

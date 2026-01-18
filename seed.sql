@@ -16,13 +16,23 @@ RESTART IDENTITY CASCADE;
 -- =========================================================
 -- 1) USERS (many employees)
 -- =========================================================
-INSERT INTO users (username, password_hash, full_name, role, is_active, created_at)
+INSERT INTO users (username, email, password_hash, full_name, phone_number, role, is_active, created_at)
 VALUES
-('admin',   'hash_admin',   'Quản trị hệ thống', 'ADMIN',   TRUE, NOW()),
-('manager', 'hash_manager', 'Quản lý khách sạn', 'MANAGER', TRUE, NOW());
+('admin',   'admin@hotel.com',   'hash_admin',   'Quản trị hệ thống', NULL, 'ADMIN',   TRUE, NOW()),
+('manager', 'manager@hotel.com', 'hash_manager', 'Quản lý khách sạn', '0900000000', 'MANAGER', TRUE, NOW());
+
 
 -- add 28 staffs
-INSERT INTO users (username, email, password_hash, full_name, role, is_active, created_at)
+INSERT INTO users (
+    username,
+    email,
+    password_hash,
+    full_name,
+    role,
+    is_active,
+    created_at,
+    phone_number
+)
 SELECT
     'staff' || LPAD(gs::text, 2, '0')                       AS username,
     'staff' || LPAD(gs::text, 2, '0') || '@hotel.com'       AS email,
@@ -30,9 +40,9 @@ SELECT
     'Nhân viên ' || gs::text                                AS full_name,
     'STAFF'::user_role                                      AS role,
     TRUE                                                    AS is_active,
-    NOW() - (random() * interval '200 days')                AS created_at
+    NOW() - (random() * interval '200 days')                AS created_at,
+    '090' || LPAD(gs::text, 7, '0')                         AS phone_number
 FROM generate_series(1, 28) gs;
-
 
 -- =========================================================
 -- 2) MASTER DATA

@@ -78,7 +78,7 @@ module.exports.createPost = async (req, res) => {
     `;
     const slipResult = await client.query(insertSlip, [
       roomId,
-      1,              //Cần accessToken để biết ai đang thực hiện
+      req.account.user_id,             
       startDate,
       'ACTIVE',
       finalPrice,

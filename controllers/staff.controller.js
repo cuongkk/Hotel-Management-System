@@ -1,7 +1,91 @@
-module.exports.list = (req, res) => {
-  res.render("pages/staff-list.pug", {
-    pageTitle: "Quản lý nhân viên",
-  });
+const staffModel = require("../models/staff.model");
+
+module.exports.list = async (req, res, next) => {
+  try {
+    const page = req.query.page || 1;
+    const pageSize = req.query.pageSize || 10;
+
+    const q = "";
+    const by = "name";
+
+    const result = await staffModel.findStaffPaged({ q, by, page, pageSize });
+
+    res.render("pages/staff-list.pug", {
+      pageTitle: "Quản lý nhân viên",
+      staffs: result.rows,
+      q,
+      by,
+      page: result.page,
+      pageSize: result.pageSize,
+      total: result.total,
+      totalPages: result.totalPages,
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
+module.exports.find = async (req, res, next) => {
+  try {
+    const q = (req.query.q || "").trim();
+    const by = (req.query.by || "name").trim(); // name | phone
+    const page = req.query.page || 1;
+    const pageSize = req.query.pageSize || 10;
+
+    const result = await staffModel.findStaffPaged({ q, by, page, pageSize });
+
+    res.render("pages/staff-list.pug", {
+      pageTitle: "Quản lý nhân viên",
+      staffs: result.rows,
+
+      // giữ state để FE show đúng
+      q,
+      by,
+
+      // pagination data
+      page: result.page,
+      pageSize: result.pageSize,
+      total: result.total,
+      totalPages: result.totalPages,
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
+module.exports.createPost = async (req, res) => {
+  try {
+    const { username, email, full_name, phone_number, role, password } = req.body;
+
+    // Validate BE tối thiểu
+    if (!username || !email || !full_name || !phone_number || !role || !password) {
+      return res.json({ result: "error", message: "Thiếu dữ liệu bắt buộc." });
+    }
+
+    if (!["STAFF", "MANAGER"].includes(role)) {
+      return res.json({ result: "error", message: "Chức vụ không hợp lệ." });
+    }
+
+    // const password_hash = await bcrypt.hash(password, 10);
+
+    await staffModel.createUser({
+      username: username.trim(),
+      email: email.trim(),
+      full_name: full_name.trim(),
+      phone_number: phone_number.trim(),
+      role,
+      password_hash: password,
+    });
+
+    return res.json({ result: "success", message: "Tạo nhân viên thành công." });
+  } catch (err) {
+    // unique violation (username/email)
+    if (err.code === "23505") {
+      return res.json({ result: "error", message: "Username hoặc Email đã tồn tại." });
+    }
+    console.error(err);
+    return res.json({ result: "error", message: "Lỗi hệ thống." });
+  }
 };
 
 module.exports.create = (req, res) => {

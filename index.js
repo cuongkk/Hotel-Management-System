@@ -12,9 +12,8 @@ app.use(express.urlencoded({ extended: true }));
 
 const indexRouter = require("./routes/index.route.js");
 
-const reportRouter = require("./routes/report.route.js");
-const rentalRouter = require("./routes/rental.route.js");
 const accountRouter = require("./routes/account.route.js");
+
 const cookieParser = require("cookie-parser");
 
 // Tạo biến toàn cục cho Backend
@@ -38,12 +37,6 @@ app.use(cookieParser());
 app.use("/", indexRouter);
 
 app.use("/account", accountRouter);
-
-//Report  
-app.use("/report", reportRouter);
-
-//Rental
-app.use("/rental", rentalRouter)
 
 
 pool
