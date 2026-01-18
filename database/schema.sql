@@ -1,3 +1,11 @@
+-- ========================= -- CREATE DATABASE -- ========================= 
+CREATE DATABASE hotel_management 
+	WITH OWNER = postgres 
+	ENCODING = 'UTF8' 
+	LC_COLLATE = 'vi_VN.UTF-8' 
+	LC_CTYPE = 'vi_VN.UTF-8' 
+	TEMPLATE = template0;
+
 -- =============================================
 -- 1. AUTHENTICATION & USERS
 -- =============================================
@@ -6,11 +14,21 @@ CREATE TYPE user_role AS ENUM ('ADMIN', 'MANAGER','STAFF');
 CREATE TABLE users (
     user_id SERIAL PRIMARY KEY,
     username VARCHAR(50) UNIQUE NOT NULL,
+	email VARCHAR(100) UNIQUE NOT NULL,
     password_hash VARCHAR(255) NOT NULL,
     full_name VARCHAR(100) NOT NULL,
-    role user_role DEFAULT 'STAFF',
+	phone_number VARCHAR(15),
+	role user_role NOT NULL DEFAULT 'STAFF',
     is_active BOOLEAN DEFAULT TRUE,
     created_at TIMESTAMP DEFAULT NOW()
+);
+
+CREATE TABLE IF NOT EXISTS password_reset_otps (
+  id SERIAL PRIMARY KEY,
+  email VARCHAR(100) NOT NULL REFERENCES users(email) ON DELETE CASCADE,
+  otp VARCHAR(10) NOT NULL,
+  expire_at TIMESTAMP NOT NULL,
+  created_at TIMESTAMP NOT NULL DEFAULT NOW()
 );
 
 -- =============================================
@@ -123,7 +141,8 @@ CREATE TABLE rental_slips (
     snap_price DECIMAL(10, 2) NOT NULL,           
     snap_max_guests INT NOT NULL,           
     -- Get max surcharge coefficient from customer type    
-    snap_surcharge_coefficient DECIMAL(4, 2) NOT NULL DEFAULT 1.0,  
+    snap_surcharge_coefficient DECIMAL(4, 2) NOT NULL, 
+    snap_extra_guest_threshold INT NOT NULL, 
     snap_surcharge_ratio DECIMAL(4, 2) NOT NULL
 );
 
@@ -140,6 +159,7 @@ CREATE TABLE invoices (
     rental_slip_id INT UNIQUE REFERENCES rental_slips(rental_slip_id),
     created_by INT REFERENCES users(user_id),
     payer_name VARCHAR(100) NOT NULL,
+    payment_method VARCHAR(50),
     payment_date TIMESTAMP DEFAULT NOW(),
     total_days INT CHECK (total_days > 0),
     total_amount DECIMAL(15, 2) NOT NULL,
