@@ -43,35 +43,32 @@ block main
 								td 
 									input(type="text" name="customers[0][phone]")
 
-					table.inner-table
-						tbody
 							tr  
 								td 2
 								td 
 									input(type="text" name="customers[1][name]")
 								td 
 									select(name="customers[1][type]")
-										option(value="Nội địa") Nội địa
-										option(value="Nước ngoài") Nước ngoài
+										option(value="DOM") Nội địa
+										option(value="FOR") Nước ngoài
 								td 
 									input(type="text" name="customers[1][idCard]")
 								td 
 									input(type="text" name="customers[1][phone]")
 
-					table.inner-table
-						tbody
 							tr  
 								td 3
 								td 
 									input(type="text" name="customers[2][name]")
 								td 
 									select(name="customers[2][type]")
-										option(value="Nội địa") Nội địa
-										option(value="Nước ngoài") Nước ngoài
+										option(value="DOM") Nội địa
+										option(value="FOR") Nước ngoài
 								td 
 									input(type="text" name="customers[2][idCard]")
 								td 
 									input(type="text" name="customers[2][phone]")
+
 				.inner-button.inner-two-col(style="display: flex; justify-content: space-between;")
 					button(type="button" style="color: black; background-color: #FFAAAA;") Hủy bỏ
 					button(type="submit" id="saveBtn") Lưu

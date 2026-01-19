@@ -1713,3 +1713,13 @@ h1.box-title {
 .inner-table tbody tr td {
   margin: 0 10px;
 }
+
+/* Validateion Errors */
+
+.just-validate-error-label {
+  color: red !important;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  font-size: 12px;
+}

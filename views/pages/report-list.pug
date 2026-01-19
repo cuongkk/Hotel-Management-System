@@ -13,64 +13,45 @@ block main
 					.inner-item
 						select(id="roomType")
 							option(value="") Loại phòng
-							option(value="A") Loại A
-							option(value="B") Loại B
-					.inner-item
-						select(id="receptions")
-							option(value="") Lễ tân phụ trách
-							option(value="LT1") Lễ tân 1
-							option(value="LT2") Lễ tân 2
-					.inner-item.inner-date
-						input(type="date" id="dateFrom")
-						span -
-						input(type="date" id="dateTo")
+							option(value="Standard") Loại Standard
+							option(value="Superior") Loại Superior
+							option(value="Deluxe") Loại Deluxe
 					.inner-item.inner-reset 
-						button(type="button" id="applyBtn") Áp dụng
+						button(type="button" id="applyBtnForReport") Áp dụng
 			//- End Section 4
 			//- Section 5
 			.section-5
 				.inner-wrap
 					.inner-search
 						<i class="fa-solid fa-magnifying-glass"></i>
-						input(type="text" placeholder="Tìm kiếm tên phòng")
-					.inner-button-create
-						a(href="")  + Tạo báo cáo theo phòng
-					.inner-button-create
-						a(href="")  + Thêm báo cáo theo loại phòng
+						input(type="text" id="roomName" placeholder="Tìm kiếm tên phòng")
 			//- End Section 5
 
-		//- Section 6
-		.section-6 
-			.table-2 
-				table 
-					thead 
-						tr
-							th.text-left Mã hóa đơn
-							th.text-left Tên phòng
-							th.text-left Loại phòng 
-							th.text-center Khách thanh toán
-							th.text-center Thành tiền
-							th.text-left Lễ tân phụ trách
-							th.text-left Thời điểm chi trả
-					tbody 
-						tr 
-							td.text-left R001
-							td.text-left 
-								div Phòng A
-							td.text-left Loại A
-							td.text-center 1
-							td.text-left 200,000 VND
-							td.text-left Lê Văn A		
-							td.text-left 16:30 - 20/10/2024
-			.pagination
-				select(class="inner-pagination")
-					option Trang 1
-					option Trang 2
-					option Trang 3
-				.inner-next
-					i(class="fa-solid fa-chevron-right")
-		//- End Section 6
+
+		.section-7
+			- let title = "Biểu đồ báo cáo"
+			if roomType
+				- title += ` doanh thu theo loại phòng ${roomType}`
+			else if roomName
+				- title += ` tổng ngày thuê theo phòng ${roomName}`
+			else
+				- title += " doanh thu khách sạn"
+			h2.box-title= title
+
+			canvas(id="roomTypeChart" width="400" height="200")
+
+			.chart-container(style="width:500px; height:500px; display:flex; justify-content:center; align-items:center; margin:0 auto;")
+				canvas(id="roomPieChart")
 
 
-block scripts 
-	script(src="/assets/js/report.js")
+
+block scripts
+	script.
+		const reportsData = !{reportsJson};
+
+	script(src="/assets/js/script.js")
+	script(src="https://cdn.jsdelivr.net/npm/chart.js")
+	script(src="/assets/js/chart.js")
+	script(src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels")
+
+

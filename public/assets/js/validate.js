@@ -13,6 +13,21 @@ if (loginForm) {
         rule: "required",
         errorMessage: "Vui lòng nhập mật khẩu",
       },
+      {
+        rule: "minLength",
+        value: 6,
+        errorMessage: "Mật khẩu phải có ít nhất 6 ký tự",
+      },
+      {
+        rule: "maxLength",
+        value: 30,
+        errorMessage: "Mật khẩu không được vượt quá 30 ký tự",
+      },
+      // {
+      //   rule: "customRegexp",
+      //   value: /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d@$!%*#?&]{6,}$/,
+      //   errorMessage: "Mật khẩu phải chứa ít nhất một chữ cái và một số",
+      // },
     ])
     .onSuccess((event) => {
       const username = event.target.username.value;
@@ -99,6 +114,11 @@ if (resetPasswordForm) {
       {
         rule: "required",
         errorMessage: "Vui lòng nhập mật khẩu",
+      },
+      {
+        rule: "customRegexp",
+        value: /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d@$!%*#?&]{6,}$/,
+        errorMessage: "Mật khẩu phải chứa ít nhất một chữ cái và một số",
       },
       {
         rule: "minLength",
@@ -269,10 +289,8 @@ if (form) {
 // End Form staff create
 
 // Profile Form
-document.addEventListener("DOMContentLoaded", () => {
-  const form = document.querySelector("#profile-form");
-  if (!form) return;
-
+const profileForm = document.querySelector("#profile-form");
+if (profileForm) {
   const emailInput = document.querySelector("#email");
   const phoneInput = document.querySelector("#phone");
   const editButtons = document.querySelectorAll(".inner-change");
@@ -280,12 +298,10 @@ document.addEventListener("DOMContentLoaded", () => {
   editButtons.forEach((btn) => {
     btn.addEventListener("click", () => {
       const field = btn.dataset.field;
-
       if (field === "email") {
         emailInput.disabled = false;
         emailInput.focus();
       }
-
       if (field === "phone") {
         phoneInput.disabled = false;
         phoneInput.focus();
@@ -297,17 +313,31 @@ document.addEventListener("DOMContentLoaded", () => {
 
   validation
     .addField("#email", [
-      { rule: "required", errorMessage: "Vui lòng nhập email" },
-      { rule: "email", errorMessage: "Email không hợp lệ" },
-    ])
-    .addField("#phone", [
-      { rule: "required", errorMessage: "Vui lòng nhập số điện thoại" },
       {
-        validator: (value) => /^0\d{9}$/.test(value.trim()),
-        errorMessage: "SĐT phải đúng định dạng (VD: 0901234567)",
+        validator: () => emailInput.disabled || emailInput.value.trim().length > 0,
+        errorMessage: "Vui lòng nhập email",
+      },
+      {
+        validator: () => emailInput.disabled || /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailInput.value.trim()),
+        errorMessage: "Email không hợp lệ",
       },
     ])
-    .onSuccess((event) => {
+    .addField("#phone", [
+      {
+        validator: () => phoneInput.disabled || phoneInput.value.trim().length > 0,
+        errorMessage: "Vui lòng nhập số điện thoại",
+      },
+      {
+        validator: (value) => phoneInput.disabled || /^0\d{9}$/.test(value.trim()),
+        errorMessage: "SĐT phải đúng định dạng (VD: 0901234567)",
+      },
+      {
+        rule: "maxLength",
+        value: 10,
+        errorMessage: "Số điện thoại không được vượt quá 10 ký tự",
+      },
+    ])
+    .onSuccess(() => {
       const payload = {};
       if (!emailInput.disabled) payload.email = emailInput.value.trim();
       if (!phoneInput.disabled) payload.phone_number = phoneInput.value.trim();
@@ -325,18 +355,18 @@ document.addEventListener("DOMContentLoaded", () => {
         .then((r) => r.json())
         .then((data) => {
           if (data.result === "error") {
-            if (typeof notyf !== "undefined") notyf.error(data.message);
-            else notyf.error(data.message);
+            notyf.error(data.message);
             return;
           }
           notyf.success(data.message);
-
           emailInput.disabled = true;
           phoneInput.disabled = true;
         })
-        .catch(() => {
-          notyf.error(data.message);
+        .catch((err) => {
+          console.error(err);
+          notyf.error("Cập nhật thất bại. Vui lòng thử lại.");
         });
     });
-});
+}
+
 //End Profile Form

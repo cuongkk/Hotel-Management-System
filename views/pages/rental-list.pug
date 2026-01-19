@@ -19,11 +19,12 @@ block main
 					.inner-item
 						select(id="roomTypeSelect")
 							option(value="") Loại phòng
-							option(value="A") Loại A
-							option(value="B") Loại B
+							option(value="Standard") Loại Standard
+							option(value="Superior") Loại Superior
+							option(value="Deluxe") Loại Deluxe
 
 					.inner-item.inner-reset
-						button(type="button" id="applyBtn") Áp dụng
+						button(type="button" id="applyBtnForRental") Áp dụng
 			//- End Section 4
 			//- Section 5
 			.section-5
@@ -65,7 +66,7 @@ block main
 										if room.status === "AVAILABLE"
 											span.status.status-green Hoạt động
 										else if room.status === "OCCUPIED"
-											span.status.status-yellow Đang tạo
+											span.status.status-orange Đang thuê
 										else
 											span.status.status-red Tạm dừng
 									td.text-left= room.receptionist || "—"
@@ -80,13 +81,21 @@ block main
 							td(colspan="8" style="text-align:center") Không có dữ liệu
 
 			.pagination
-				select(class="inner-pagination")
-					option Trang 1
-					option Trang 2
-					option Trang 3
+				select.inner-pagination(onchange="location.href=this.value")
+					- for (let p = 1; p <= totalPages; p++)
+						option(
+							value=`/rental?roomName=${encodeURIComponent(filters.roomName || '')}&status=${encodeURIComponent(filters.status || '')}&roomType=${encodeURIComponent(filters.roomType || '')}&page=${p}&pageSize=${pageSize}`
+							selected=(p === page)
+						) Trang #{p}
 				.inner-next
-					i(class="fa-solid fa-chevron-right")
-		//- End Section 6
+					if page > 1
+						a(href=`/rental?roomName=${encodeURIComponent(filters.roomName || '')}&status=${encodeURIComponent(filters.status || '')}&roomType=${encodeURIComponent(filters.roomType || '')}&page=${page - 1}&pageSize=${pageSize}`)
+							i.fa-solid.fa-chevron-left
+					if page < totalPages
+						a(href=`/rental?roomName=${encodeURIComponent(filters.roomName || '')}&status=${encodeURIComponent(filters.status || '')}&roomType=${encodeURIComponent(filters.roomType || '')}&page=${page + 1}&pageSize=${pageSize}`)
+							i.fa-solid.fa-chevron-right
+
+						//- End Section 6
 
 block scripts
 	script(src="/assets/js/script.js")
