@@ -6,9 +6,11 @@ const { pathAdmin } = require("./configs/variable.config");
 const path = require("path");
 const app = express();
 const port = 3000;
+const methodOverride = require("method-override");
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(methodOverride("_method"));
 
 const indexRouter = require("./routes/index.route.js");
 

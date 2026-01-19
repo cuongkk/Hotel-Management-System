@@ -38,14 +38,14 @@ exports.create = async (req, res) => {
       [room_id, room_name, room_type_id, status, note]
     );
 
-    res.redirect("/rooms");
+    res.redirect("/room");
   } catch (err) {
     console.error(err);
     res.status(500).send("Database error");
   }
 };
 
-exports.detail = async (req, res) => {
+exports.showUpdate = async (req, res) => {
   const { id } = req.params;
 
   try {
@@ -58,30 +58,7 @@ exports.detail = async (req, res) => {
       return res.status(404).send("Room not found");
     }
 
-    res.render("pages/room-detail.pug", {
-      pageTitle: "Chi tiết phòng",
-      room: result.rows[0]
-    });
-  } catch (err) {
-    console.error(err);
-    res.status(500).send("Database error");
-  }
-};
-
-exports.showEdit = async (req, res) => {
-  const { id } = req.params;
-
-  try {
-    const result = await pool.query(
-      "SELECT * FROM rooms WHERE room_id = $1",
-      [id]
-    );
-
-    if (result.rows.length === 0) {
-      return res.status(404).send("Room not found");
-    }
-
-    res.render("pages/room-edit.pug", {
+    res.render("pages/room-update.pug", {
       pageTitle: "Cập nhật phòng",
       room: result.rows[0]
     });
@@ -92,6 +69,8 @@ exports.showEdit = async (req, res) => {
 };
 
 exports.update = async (req, res) => {
+  console.log(">>> UPDATE CONTROLLER HIT <<<");
+  console.log("METHOD:", req.method);
   const { id } = req.params;
   const { room_name, room_type_id, status, note } = req.body;
 
@@ -110,7 +89,7 @@ exports.update = async (req, res) => {
       return res.status(404).send("Room not found");
     }
 
-    res.redirect("/rooms");
+    res.redirect("/room");
   } catch (err) {
     console.error(err);
     res.status(500).send("Database error");
@@ -130,7 +109,7 @@ exports.delete = async (req, res) => {
       return res.status(404).send("Room not found");
     }
 
-    res.redirect("/rooms");
+    res.redirect("/room");
   } catch (err) {
     console.error(err);
     res.status(500).send("Database error");

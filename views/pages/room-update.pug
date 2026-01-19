@@ -1,0 +1,102 @@
+extends ../layouts/default.pug
+include ../mixins/checkbox-30.pug
+
+block main
+  main.main
+    h1.box-title Mã phòng #{room.room_name}
+
+    .section-8
+      form(
+        action=`/room/update/${room.room_id}`
+        method="POST"
+        id="room-edit-form"
+      )
+        input(type="hidden" name="_method" value="PUT")
+
+
+        //- Tên phòng
+        .inner-group 
+          label.inner-label(for="room_name") Tên phòng
+          input(
+            type="text"
+            id="room_name"
+            name="room_name"
+            value=room.room_name
+            required
+          )
+
+        //- Loại phòng
+        .inner-group 
+          label.inner-label(for="room_type_id") Loại phòng
+          select(
+            id="room_type_id"
+            name="room_type_id"
+            required
+          )
+            option(value="") Chọn loại phòng
+            option(
+              value="1"
+              selected=room.room_type_id == 1
+            ) Loại A
+            option(
+              value="2"
+              selected=room.room_type_id == 2
+            ) Loại B
+
+        //- Đơn giá
+        .inner-group 
+          label.inner-label(for="price") Đơn giá
+          input(
+            type="number"
+            id="price"
+            name="price"
+            value=room.price
+          )
+          button.inner-change(type="button")
+            <i class="fa-solid fa-pen-to-square"></i>
+
+        //- Số khách tối đa
+        .inner-group 
+          label.inner-label(for="max_guests") Số khách tối đa
+          input(
+            type="number"
+            id="max_guests"
+            name="max_guests"
+            value=room.max_guests
+          )
+          button.inner-change(type="button")
+            <i class="fa-solid fa-pen-to-square"></i>
+
+        //- Ảnh đại diện
+        .inner-group.inner-two-col
+          label.inner-label(for="avatar") Ảnh đại diện
+          .inner-upload-image
+            input(
+              type="file"
+              id="avatar"
+              name="avatar"
+            )
+
+        //- Ghi chú
+        .inner-group.inner-note 
+          label.inner-label(for="note") Ghi chú
+          textarea(
+            id="note"
+            name="note"
+          )= room.note
+
+        //- Buttons
+        .inner-button.inner-two-col(
+          style="display: flex; justify-content: space-between;"
+        )
+          button(
+            type="submit"
+          ) Lưu
+
+          a(
+            href=`/room/delete/${room.room_id}`
+            style="color: black; background-color: #FFAAAA;"
+          ) Xóa
+
+    .inner-back 
+      a(href="/room") Quay lại danh sách

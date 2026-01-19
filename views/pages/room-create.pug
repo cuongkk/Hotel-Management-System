@@ -25,17 +25,13 @@ block main
             option(value="2") Loại B
             option(value="3") Loại C
 
-        //- Số khách tối đa
+        //- Lễ tân phụ trách
         .inner-group
-          label.inner-label(for="max_guests") Số khách tối đa
-          input(
-            type="number"
-            id="max_guests"
-            name="max_guests"
-            min="1"
-            value="3"
-            required
-          )
+          label.inner-label(for="receptionist") Lễ tân phụ trách
+          select(id="receptionist" name="receptionist" required)
+            option(value="") Chọn lễ tân
+            option(value="le_van_a") Lê Văn A
+            option(value="nguyen_thi_b") Nguyễn Thị B
 
         .inner-group
           label.inner-label(for="room_images") Ảnh phòng
