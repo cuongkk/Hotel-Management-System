@@ -105,6 +105,24 @@ document.addEventListener("DOMContentLoaded", () => {
 // RENTAL
 
 document.addEventListener("DOMContentLoaded", () => {
+  const btn = document.getElementById("applyBtnForRental");
+  if (!btn) return;
+
+  btn.addEventListener("click", () => {
+    const roomName = document.getElementById("roomNameInput")?.value.trim();
+    const status = document.getElementById("statusSelect")?.value;
+    const roomType = document.getElementById("roomTypeSelect")?.value;
+    const params = new URLSearchParams();
+
+    if (roomName) params.append("roomName", roomName);
+    if (status) params.append("status", status);
+    if (roomType) params.append("roomType", roomType);
+
+    window.location.href = `/rental?${params.toString()}`;
+  });
+});
+
+document.addEventListener("DOMContentLoaded", () => {
   const guestCountInput = document.getElementById("guestCount");
   const customerRows = document.getElementById("customerRows");
 

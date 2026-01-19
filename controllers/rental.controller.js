@@ -8,21 +8,29 @@ module.exports.list = async (req, res) => {
     const pageSize = parseInt(req.query.pageSize) || 10;
 
     let sqlForRental = `
-      SELECT DISTINCT
-        r.room_id AS room_id,
-        r.room_name,
-        rt.type_name AS room_type,
-        rt.max_guests AS max_guest,
-        rt.base_price AS price,
-        r.status,
-        u.full_name AS receptionist
-      FROM rooms r
-      LEFT JOIN room_types rt ON r.room_type_id = rt.room_type_id
-      LEFT JOIN rental_slips rs 
-        ON r.room_id = rs.room_id AND rs.status = 'ACTIVE'
-      LEFT JOIN users u ON rs.created_by = u.user_id
-      WHERE 1=1
-    `;
+			SELECT
+				r.room_id,
+				r.room_name,
+				rt.type_name AS room_type,
+				rt.max_guests AS max_guest,
+				rt.base_price AS price,
+				r.status,
+				CASE
+					WHEN r.status = 'OCCUPIED' THEN u.full_name
+					ELSE NULL
+				END AS eceptionis
+			FROM rooms r
+			LEFT JOIN room_types rt ON r.room_type_id = rt.room_type_id
+			LEFT JOIN LATERAL (
+				SELECT rs.created_by, rs.started_at
+				FROM rental_slips rs
+				WHERE rs.room_id = r.room_id
+				ORDER BY rs.started_at DESC
+				LIMIT 1
+			) last_rs ON TRUE
+			LEFT JOIN users u ON u.user_id = last_rs.created_by
+			WHERE 1=1
+		`;
 
     const values = [];
     let idx = 1;
@@ -45,7 +53,6 @@ module.exports.list = async (req, res) => {
 
     const result = await pool.query(sqlForRental, values);
 
-    // Đếm tổng số phòng để tính totalPages
     let countSql = `
       SELECT COUNT(*) 
       FROM rooms r

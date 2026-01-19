@@ -14,7 +14,7 @@ block main
 						select(id="statusSelect")
 							option(value="") Trạng thái
 							option(value="AVAILABLE") Hoạt động
-							option(value="OCCUPIED") Đang tạo
+							option(value="OCCUPIED") Đang thuê
 							option(value="MAINTENANCE") Tạm dừng
 					.inner-item
 						select(id="roomTypeSelect")
@@ -73,7 +73,7 @@ block main
 										if room.status === "AVAILABLE"
 											div="—"
 										else if room.status === "OCCUPIED"
-											div= room.receptionist || "—"
+											div= room.eceptionis || "—"
 										else
 											div="—"
 									td.text-left
