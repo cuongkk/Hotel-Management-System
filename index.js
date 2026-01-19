@@ -14,6 +14,8 @@ app.use(methodOverride("_method"));
 
 const indexRouter = require("./routes/index.route.js");
 
+const accountRouter = require("./routes/account.route.js");
+
 const cookieParser = require("cookie-parser");
 
 // Tạo biến toàn cục cho Backend
@@ -36,16 +38,20 @@ app.use(cookieParser());
 
 app.use("/", indexRouter);
 
+app.use("/account", accountRouter);
+
+
 pool
   .connect()
   .then((client) => {
-    console.log("✅ Connected to PostgreSQL");
+    console.log("Connected to PostgreSQL");
     client.release();
 
     app.listen(port, () => {
-      console.log(`✅ Server running at http://localhost:${port}`);
+      console.log(`Server running at http://localhost:${port}`);
     });
   })
   .catch((err) => {
+    console.error("Cannot connect to PostgreSQL:", err.message);
     process.exit(1);
   });
