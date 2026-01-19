@@ -43,34 +43,90 @@ module.exports.list = async (req, res, next) => {
   }
 };
 
-exports.showCreate = (req, res) => {
-  res.render("pages/room-create.pug", {
-    pageTitle: "Tạo phòng mới",
-  });
+module.exports.showCreate = async (req, res) => {
+  try {
+    const rawRoomTypes = await roomModel.getAllRoomTypes();
+    const roomTypesList = rawRoomTypes.rows ? rawRoomTypes.rows : rawRoomTypes;
+
+    res.render("pages/room-create", {
+      pageTitle: "Thêm phòng mới",
+      roomTypesList: roomTypesList,
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Server Error");
+  }
+};
+
+module.exports.generateNextRoomId = async () => {
+  // 1. Lấy room_id lớn nhất hiện tại (Sắp xếp giảm dần)
+  const query = "SELECT room_id FROM rooms ORDER BY room_id DESC LIMIT 1";
+  const result = await pool.query(query);
+
+  let nextId = "R0001"; // Giá trị mặc định nếu bảng rỗng
+
+  if (result.rows.length > 0) {
+    const lastId = result.rows[0].room_id; // Ví dụ: "R0030"
+
+    // 2. Tách phần số: Bỏ chữ "R", lấy "0030" -> chuyển thành số 30
+    const currentNumber = parseInt(lastId.replace("R", ""), 10);
+
+    // 3. Tăng lên 1
+    const nextNumber = currentNumber + 1;
+
+    // 4. Format lại thành chuỗi 4 chữ số (pad zero) -> "0031"
+    // padStart(4, '0') nghĩa là nếu thiếu thì điền số 0 vào trước cho đủ 4 ký tự
+    nextId = `R${nextNumber.toString().padStart(4, "0")}`;
+  }
+
+  return nextId;
+};
+
+module.exports.createRoom = async (data) => {
+  const { room_id, room_name, room_type_id, note } = data;
+  const query = `
+      INSERT INTO rooms (room_id, room_name, room_type_id, status, note)
+      VALUES ($1, $2, $3, 'AVAILABLE', $4)
+    `;
+  return await pool.query(query, [room_id, room_name, room_type_id, note]);
 };
 
 exports.create = async (req, res) => {
-  const { room_id, room_name, room_type_id, status, note } = req.body;
+  const { room_name, room_type_id, note } = req.body;
 
-  if (!room_id || !room_name) {
-    return res.status(400).send("Missing required fields");
+  if (!room_name || !room_type_id) {
+    return res.json({ result: "error", message: "Thiếu thông tin bắt buộc" });
   }
 
   try {
-    await pool.query(
-      `INSERT INTO rooms (room_id, room_name, room_type_id, status, note)
-       VALUES ($1, $2, $3, $4, $5)`,
-      [room_id, room_name, room_type_id, status, note],
-    );
+    const isDuplicate = await roomModel.checkRoomNameExists(room_name);
+    if (isDuplicate) {
+      return res.json({
+        result: "error",
+        message: `Tên phòng "${room_name}" đã tồn tại. Vui lòng chọn tên khác.`,
+      });
+    }
 
-    res.redirect("/rooms");
+    const newRoomId = await roomModel.generateNextRoomId();
+
+    await roomModel.createRoom({
+      room_id: newRoomId,
+      room_name,
+      room_type_id,
+      note,
+    });
+
+    return res.json({
+      result: "success",
+      message: `Thêm phòng thành công! Mã: ${newRoomId}`,
+    });
   } catch (err) {
     console.error(err);
-    res.status(500).send("Database error");
+    res.status(500).json({ result: "error", message: "Lỗi hệ thống: " + err.message });
   }
 };
 
-exports.showUpdate = async (req, res) => {
+module.exports.showUpdate = async (req, res) => {
   const { id } = req.params;
 
   try {
@@ -95,14 +151,15 @@ exports.showUpdate = async (req, res) => {
     `,
       [id],
     );
+    const roomTypesList = await roomModel.getAllRoomTypes();
 
     if (result.rows.length === 0) {
       return res.status(404).send("Room not found");
     }
-
     res.render("pages/room-update", {
       pageTitle: "Cập nhật phòng",
       room: result.rows[0],
+      roomTypesList: roomTypesList,
     });
   } catch (err) {
     console.error(err);
@@ -112,26 +169,53 @@ exports.showUpdate = async (req, res) => {
 
 exports.update = async (req, res) => {
   const { id } = req.params;
-  const { room_name, room_type_id, status, note } = req.body;
+  const updates = req.body;
+
+  const allowedColumns = ["room_name", "room_type_id", "status", "note"];
+
+  const setClauses = [];
+  const values = [];
+  let paramIndex = 1;
+
+  allowedColumns.forEach((col) => {
+    if (updates[col] !== undefined) {
+      setClauses.push(`${col} = $${paramIndex}`);
+      values.push(updates[col]);
+      paramIndex++;
+    }
+  });
+
+  if (setClauses.length === 0) {
+    return res.json({ result: "info", message: "Không có dữ liệu nào cần cập nhật" });
+  }
+
+  values.push(id);
+
+  const queryString = `
+    UPDATE rooms
+    SET ${setClauses.join(", ")}
+    WHERE room_id = $${paramIndex}
+  `;
 
   try {
-    const result = await pool.query(
-      `UPDATE rooms
-       SET room_name = $1,
-           room_type_id = $2,
-           status = $3,
-           note = $4
-       WHERE room_id = $5`,
-      [room_name, room_type_id, status, note, id],
-    );
+    if (updates.room_name) {
+      const isDuplicate = await roomModel.checkRoomNameExists(updates.room_name, id);
+      if (isDuplicate) {
+        return res.json({
+          result: "error",
+          message: `Tên phòng "${updates.room_name}" đã được sử dụng bởi phòng khác.`,
+        });
+      }
+    }
+    const result = await pool.query(queryString, values);
 
     if (result.rowCount === 0) {
-      return res.status(404).send("Room not found");
+      return res.status(404).json({ result: "error", message: "Phòng không tồn tại" });
     }
 
-    res.redirect("/room");
+    return res.json({ result: "success", message: "Cập nhật phòng thành công" });
   } catch (err) {
     console.error(err);
-    res.status(500).send("Database error");
+    res.status(500).json({ result: "error", message: "Lỗi cơ sở dữ liệu: " + err.message });
   }
 };

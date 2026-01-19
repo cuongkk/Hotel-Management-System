@@ -25,10 +25,6 @@ block main
 							if roomTypesList
 								each type in roomTypesList
 										option(value=type.type_name selected=(filters.roomType == type.type_name)) #{type.type_name}
-							else
-								option(value="Standard" selected=(filters.roomType == 'Standard')) Standard
-								option(value="Superior" selected=(filters.roomType == 'Superior')) Superior
-								option(value="Deluxe" selected=(filters.roomType == 'Deluxe')) Deluxe
 
 					.inner-item.inner-reset
 						button(type="button" id="applyBtnForRoom") Áp dụng
@@ -76,7 +72,7 @@ block main
 											span.status.status-orange Đang thuê
 										else
 											span.status.status-red Tạm dừng
-									td.text-left= room.note
+									td.text-left
 										.box-actions
 											a(
 												href=`/room/update/${room.room_id}`
