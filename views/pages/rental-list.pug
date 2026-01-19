@@ -14,7 +14,7 @@ block main
 						select(id="statusSelect")
 							option(value="") Trạng thái
 							option(value="AVAILABLE") Hoạt động
-							option(value="OCCUPIED") Đang tạo
+							option(value="OCCUPIED") Đang thuê
 							option(value="MAINTENANCE") Tạm dừng
 					.inner-item
 						select(id="roomTypeSelect")
@@ -66,7 +66,7 @@ block main
 										if room.status === "AVAILABLE"
 											span.status.status-green Hoạt động
 										else if room.status === "OCCUPIED"
-											span.status.status-yellow Đang tạo
+											span.status.status-yellow Đang thuê
 										else
 											span.status.status-red Tạm dừng
 									td.text-left= room.receptionist || "—"

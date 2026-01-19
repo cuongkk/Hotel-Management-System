@@ -9,13 +9,16 @@ module.exports.list = async (req, res) => {
 
     let sqlForRental = `
       SELECT DISTINCT
-        r.room_id AS room_id,
+        r.room_id,
         r.room_name,
         rt.type_name AS room_type,
         rt.max_guests AS max_guest,
         rt.base_price AS price,
         r.status,
-        u.full_name AS receptionist
+        CASE 
+          WHEN r.status = 'OCCUPIED' THEN u.full_name
+          ELSE NULL
+        END AS receptionist
       FROM rooms r
       LEFT JOIN room_types rt ON r.room_type_id = rt.room_type_id
       LEFT JOIN rental_slips rs 
