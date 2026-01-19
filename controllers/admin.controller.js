@@ -10,7 +10,7 @@ exports.setting = (req, res) => {
     max_guests: 3                 // tối đa 3 khách / phòng
   };
 
-  res.render("pages/settings", {
+  res.render("pages/setting", {
     pageTitle: "Cài đặt quy định giá",
     rule
   });

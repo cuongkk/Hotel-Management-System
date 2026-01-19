@@ -2,79 +2,79 @@ extends ../layouts/default.pug
 include ../mixins/checkbox-30.pug
 
 block main
-  main.main
-    h1.box-title Cài đặt quy định giá
+	main.main
+		h1.box-title Cài đặt
+		.section-8
+			form(action="" id="room-create-form")
+				.inner-group.inner-two-col(
+					style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px;"
+					)
+					label.inner-label(for="type") Loại khách
+					label.inner-label(for="ratio") Hệ số
 
-    .section-8
-      // ===== PHỤ THU =====
-      h2.section-title Phụ thu
+					.inner-group
+						input(
+						type="text"
+						value="Trong nước"
+						readonly
+						)
 
-      .inner-group
-        label.inner-label Khách nước ngoài
-        input(
-          type="text"
-          value="Nhân 1.5 lần giá phòng"
-          readonly
-        )
+					.inner-group 
+						input(type="text" id="ratio" name="ratio" value="1.0")
+						button.inner-change(style="top:30% ")
+							<i class="fa-solid fa-pen-to-square"></i>
 
-      .inner-group
-        label.inner-label Khách thứ 3
-        input(
-          type="text"
-          value="Phụ thu thêm 25%"
-          readonly
-        )
+					.inner-group
+						input(
+						type="text"
+						value="Nước ngoài"
+						readonly
+						)
 
-      // ===== QUY ĐỊNH SỐ KHÁCH =====
-      h2.section-title Quy định số khách
+					.inner-group 
+						input(type="text" id="ratio" name="ratio" value="1.5")
+						button.inner-change(style="top:30% ")
+							<i class="fa-solid fa-pen-to-square"></i>
 
-      .inner-group
-        label.inner-label Số khách tối đa / phòng
-        input(
-          type="text"
-          value="Tối đa 3 khách"
-          readonly
-        )
+				// ================= GIÁ PHÒNG THEO LOẠI =================
+				.inner-group.inner-two-col(
+				style="display: grid; grid-template-columns: 1.5fr 1fr; gap: 20px; align-items: center;"
+				)
+				// ===== HEADER =====
+				label.inner-label Loại phòng
+				label.inner-label Đơn giá (VND)
 
-      // ===== GIÁ PHÒNG THEO LOẠI =====
-      h2.section-title Giá phòng theo loại
+				// ===== STANDARD =====
+				.inner-group
+					input(type="text" value="Standard" readonly)
 
-      .inner-group.inner-two-col(
-        style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px;"
-      )
-        label.inner-label Loại phòng
-        label.inner-label Đơn giá (VND)
-        label.inner-label Ghi chú
+				.inner-group(style="position: relative;")
+					input(type="text" value="150.000")
+					button.inner-change(type="button" style="position:absolute; right:10px; top:50%; transform:translateY(-50%)")
+					i.fa-solid.fa-pen-to-square
 
-        // ===== LOẠI A =====
-        .inner-group
-          input(type="text" value="Loại A" readonly)
+				// ===== SUPERIOR =====
+				.inner-group
+					input(type="text" value="Superior" readonly)
 
-        .inner-group
-          input(type="text" value="150.000" readonly)
+				.inner-group(style="position: relative;")
+					input(type="text" value="170.000")
+					button.inner-change(type="button" style="position:absolute; right:10px; top:50%; transform:translateY(-50%)")
+					i.fa-solid.fa-pen-to-square
 
-        .inner-group
-          input(type="text" value="Phòng tiêu chuẩn" readonly)
+				// ===== DELUXE =====
+				.inner-group
+					input(type="text" value="Deluxe" readonly)
 
-        // ===== LOẠI B =====
-        .inner-group
-          input(type="text" value="Loại B" readonly)
+				.inner-group(style="position: relative;")
+					input(type="text" value="200.000")
+					button.inner-change(type="button" style="position:absolute; right:10px; top:50%; transform:translateY(-50%)")
+					i.fa-solid.fa-pen-to-square
 
-        .inner-group
-          input(type="text" value="170.000" readonly)
 
-        .inner-group
-          input(type="text" value="Phòng nâng cao" readonly)
 
-        // ===== LOẠI C =====
-        .inner-group
-          input(type="text" value="Loại C" readonly)
-
-        .inner-group
-          input(type="text" value="200.000" readonly)
-
-        .inner-group
-          input(type="text" value="Phòng cao cấp" readonly)
-
-    .inner-back
-      a(href="/") Quay lại danh sách
+				.inner-button.inner-two-col
+					button Lưu
+			.inner-back 
+				a(href="/dashboard") Quay lại trang chủ
+		
