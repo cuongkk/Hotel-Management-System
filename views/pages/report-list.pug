@@ -44,6 +44,9 @@ block main
 
 			canvas(id="roomTypeChart" width="400" height="200")
 
+			.chart-container(style="width:500px; height:500px; display:flex; justify-content:center; align-items:center; margin:0 auto;")
+				canvas(id="roomPieChart")
+
 
 
 block scripts
@@ -53,4 +56,6 @@ block scripts
 	script(src="/assets/js/script.js")
 	script(src="https://cdn.jsdelivr.net/npm/chart.js")
 	script(src="/assets/js/chart.js")
+	script(src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels")
+
 

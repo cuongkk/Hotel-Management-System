@@ -1,10 +1,11 @@
 const pool = require("../configs/database.config");
 const db = require("../configs/database.config");
 
-
 module.exports.list = async (req, res) => {
   try {
     const { roomName, status, roomType } = req.query;
+    const page = parseInt(req.query.page) || 1;
+    const pageSize = parseInt(req.query.pageSize) || 10;
 
     let sqlForReport = `
       SELECT DISTINCT
@@ -30,25 +31,54 @@ module.exports.list = async (req, res) => {
       sqlForReport += ` AND r.room_name ILIKE $${idx++}`;
       values.push(`%${roomName}%`);
     }
-
     if (status) {
       sqlForReport += ` AND r.status = $${idx++}::room_status`;
       values.push(status);
     }
-
     if (roomType) {
       sqlForReport += ` AND rt.type_name = $${idx++}`;
       values.push(roomType);
     }
 
-    sqlForReport += ` ORDER BY r.room_id`;
+    sqlForReport += ` ORDER BY r.room_id LIMIT $${idx++} OFFSET $${idx++}`;
+    values.push(pageSize, (page - 1) * pageSize);
 
     const result = await pool.query(sqlForReport, values);
+
+    // Đếm tổng số phòng để tính totalPages
+    let countSql = `
+      SELECT COUNT(*) 
+      FROM rooms r
+      LEFT JOIN room_types rt ON r.room_type_id = rt.room_type_id
+      WHERE 1=1
+    `;
+    const countValues = [];
+    let cIdx = 1;
+    if (roomName) {
+      countSql += ` AND r.room_name ILIKE $${cIdx++}`;
+      countValues.push(`%${roomName}%`);
+    }
+    if (status) {
+      countSql += ` AND r.status = $${cIdx++}::room_status`;
+      countValues.push(status);
+    }
+    if (roomType) {
+      countSql += ` AND rt.type_name = $${cIdx++}`;
+      countValues.push(roomType);
+    }
+
+    const countResult = await pool.query(countSql, countValues);
+    const total = parseInt(countResult.rows[0].count, 10);
+    const totalPages = Math.ceil(total / pageSize);
 
     res.render("pages/rental-list", {
       pageTitle: "Quản lý thuê phòng",
       rooms: result.rows,
       filters: { roomName, status, roomType },
+      page,
+      pageSize,
+      total,
+      totalPages,
     });
   } catch (err) {
     console.error("DB error:", err);
@@ -56,10 +86,12 @@ module.exports.list = async (req, res) => {
   }
 };
 
+
 module.exports.createPost = async (req, res) => {
   const client = await db.pool.connect();
   try {
-    const { roomId, roomName, roomType, price, startDate, customers } = req.body;
+    const { roomId, roomName, roomType, price, startDate, customers } =
+      req.body;
 
     let finalPrice = parseFloat(price);
     if (customers.length > 2) finalPrice *= 1.25;
@@ -78,9 +110,9 @@ module.exports.createPost = async (req, res) => {
     `;
     const slipResult = await client.query(insertSlip, [
       roomId,
-      req.account.user_id,             
+      req.account.user_id,
       startDate,
-      'ACTIVE',
+      "ACTIVE",
       finalPrice,
       customers.length,
       hasForeign ? 1.5 : 1.0,
@@ -93,7 +125,7 @@ module.exports.createPost = async (req, res) => {
       let customerId;
       const check = await client.query(
         "SELECT customer_id FROM customers WHERE identity_card = $1",
-        [c.idCard]
+        [c.idCard],
       );
       if (check.rows.length > 0) {
         customerId = check.rows[0].customer_id;
@@ -114,11 +146,11 @@ module.exports.createPost = async (req, res) => {
       }
       await client.query(
         "INSERT INTO rental_details (rental_slip_id, customer_id) VALUES ($1, $2)",
-        [rentalSlipId, customerId]
+        [rentalSlipId, customerId],
       );
     }
 
-    const result = await client.query( 
+    const result = await client.query(
       `SELECT 
         r.room_id,
         r.room_name, 
@@ -126,10 +158,10 @@ module.exports.createPost = async (req, res) => {
         rt.base_price AS price, 
         rt.max_guests 
       FROM rooms r LEFT JOIN room_types rt ON r.room_type_id = rt.room_type_id 
-      WHERE r.room_id = $1`, 
-      [roomId] 
-    ); 
-      
+      WHERE r.room_id = $1`,
+      [roomId],
+    );
+
     const room = result.rows[0];
 
     await client.query("COMMIT");
@@ -172,12 +204,10 @@ module.exports.createGet = async (req, res) => {
 
     const room = result.rows[0];
     res.render("pages/rental-create", {
-    pageTitle: "Lập phiếu thuê phòng",
-    room,
+      pageTitle: "Lập phiếu thuê phòng",
+      room,
     });
-
   } catch (error) {
     res.status(500).send("Server error");
   }
 };
-

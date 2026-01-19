@@ -81,13 +81,21 @@ block main
 							td(colspan="8" style="text-align:center") Không có dữ liệu
 
 			.pagination
-				select(class="inner-pagination")
-					option Trang 1
-					option Trang 2
-					option Trang 3
+				select.inner-pagination(onchange="location.href=this.value")
+					- for (let p = 1; p <= totalPages; p++)
+						option(
+							value=`/rental?roomName=${encodeURIComponent(filters.roomName || '')}&status=${encodeURIComponent(filters.status || '')}&roomType=${encodeURIComponent(filters.roomType || '')}&page=${p}&pageSize=${pageSize}`
+							selected=(p === page)
+						) Trang #{p}
 				.inner-next
-					i(class="fa-solid fa-chevron-right")
-		//- End Section 6
+					if page > 1
+						a(href=`/rental?roomName=${encodeURIComponent(filters.roomName || '')}&status=${encodeURIComponent(filters.status || '')}&roomType=${encodeURIComponent(filters.roomType || '')}&page=${page - 1}&pageSize=${pageSize}`)
+							i.fa-solid.fa-chevron-left
+					if page < totalPages
+						a(href=`/rental?roomName=${encodeURIComponent(filters.roomName || '')}&status=${encodeURIComponent(filters.status || '')}&roomType=${encodeURIComponent(filters.roomType || '')}&page=${page + 1}&pageSize=${pageSize}`)
+							i.fa-solid.fa-chevron-right
+
+						//- End Section 6
 
 block scripts
 	script(src="/assets/js/script.js")

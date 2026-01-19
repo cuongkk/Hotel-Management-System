@@ -50,7 +50,7 @@ module.exports.listGetReport = async (req, res) => {
     const result = await pool.query(sql, values);
     const reports = result.rows;
 
-
+    
 
     res.render("pages/report-list", {
       pageTitle: "Lập báo cáo",
