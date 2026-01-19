@@ -14,8 +14,6 @@ app.use(methodOverride("_method"));
 
 const indexRouter = require("./routes/index.route.js");
 
-const reportRouter = require("./routes/report.route.js");
-const rentalRouter = require("./routes/rental.route.js");
 const cookieParser = require("cookie-parser");
 
 // Tạo biến toàn cục cho Backend

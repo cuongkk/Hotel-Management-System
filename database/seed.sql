@@ -1,3 +1,6 @@
+-- =========================================================
+-- CLEAN DATA
+-- =========================================================
 TRUNCATE TABLE
     invoices,
     rental_details,
@@ -5,6 +8,7 @@ TRUNCATE TABLE
     surcharge_rule_history,
     customer_type_history,
     room_type_history,
+    password_reset_otps,
     customers,
     rooms,
     surcharge_rules,

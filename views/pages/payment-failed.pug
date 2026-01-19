@@ -1,0 +1,31 @@
+extends ../layouts/default.pug
+
+block main
+  main.main(class="bg-gray-50 min-h-screen flex items-center justify-center p-4")
+    
+    div(class="bg-white p-8 rounded-2xl shadow-lg border border-gray-100 max-w-md w-full text-center")
+        
+        div(class="w-20 h-20 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-6")
+            i(class="fa-solid fa-xmark text-4xl text-red-500")
+
+        h1(class="text-2xl font-bold text-gray-800 mb-2") Thanh toán thất bại
+        p(class="text-gray-500 mb-6") 
+            | Rất tiếc, đã xảy ra lỗi khi xử lý giao dịch cho phòng 
+            span(class="font-bold text-gray-800") #{roomId}
+            | . Vui lòng kiểm tra lại.
+
+        div(class="bg-red-50 rounded-lg p-4 mb-8 border border-red-100 text-left")
+            p(class="text-xs font-bold text-red-500 uppercase mb-1") Nguyên nhân có thể:
+            ul(class="text-sm text-red-700 list-disc list-inside space-y-1")
+                li Lỗi kết nối cơ sở dữ liệu.
+                li Phiếu thuê không hợp lệ hoặc đã bị hủy.
+                li Dữ liệu đầu vào bị thiếu.
+
+        div(class="flex flex-col gap-3")
+            //- Nút thử lại quay về trang checkout
+            a(href=`/checkout/${roomId}` class="w-full bg-red-500 hover:bg-red-600 text-white font-bold py-3 rounded-lg shadow transition-all transform active:scale-95")
+                i(class="fa-solid fa-rotate-right mr-2")
+                | Thử lại ngay
+            
+            a(href="/dashboard" class="w-full bg-white border border-gray-300 text-gray-700 font-medium py-3 rounded-lg hover:bg-gray-50 transition-colors")
+                | Quay về Tổng quan

@@ -1,4 +1,5 @@
 const { query } = require("../configs/database.config");
+
 module.exports.dashboard = async (req, res) => {
   try {
     const currentYear = new Date().getFullYear();
