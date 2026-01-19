@@ -254,7 +254,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // --- Kiểm tra kết quả Validate ---
     if (!isValid) {
-      alert("Lỗi: " + errorMessage);
+      notyf.error("Lỗi: " + errorMessage);
       return; // Dừng lại không gửi
     }
 
@@ -268,14 +268,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
       const result = await response.json();
       if (response.ok) {
-        alert("Cập nhật thành công!");
+        notyf.success("Cập nhật thành công!");
         window.location.reload();
       } else {
-        alert("Lỗi server: " + result.message);
+        notyf.error("Lỗi server: " + result.message);
       }
     } catch (error) {
       console.error(error);
-      alert("Không thể kết nối đến server.");
+      notyf.error("Không thể kết nối đến server.");
     }
   });
 });
@@ -285,50 +285,48 @@ document.addEventListener("DOMContentLoaded", () => {
 // ROOM
 
 document.addEventListener("DOMContentLoaded", function () {
-  const searchRoom = document.getElementById("searchRoom");
-  const filterStatus = document.getElementById("filterStatus");
-  const filterTypeRoom = document.getElementById("filterTypeRoom");
-  const roomItems = document.querySelectorAll(".room-item");
-  const noResult = document.getElementById("noResult");
+  const statusSelect = document.getElementById("statusSelect");
+  const roomTypeSelect = document.getElementById("roomTypeSelect");
+  const roomNameInput = document.getElementById("roomNameInput");
+  const applyBtn = document.getElementById("applyBtnForRoom");
 
-  if (!searchRoom || !filterStatus || !filterTypeRoom) return;
+  function applyFilter() {
+    const status = statusSelect.value;
+    const roomType = roomTypeSelect.value;
+    const roomName = roomNameInput.value.trim();
 
-  function filterRooms() {
-    const searchText = searchRoom.value.toLowerCase().trim();
-    const statusValue = filterStatus.value;
-    const typeRoomValue = filterTypeRoom.value;
+    const url = new URL(window.location.href);
 
-    let visibleCount = 0;
+    if (status) url.searchParams.set("status", status);
+    else url.searchParams.delete("status");
 
-    roomItems.forEach((item) => {
-      const name = item.dataset.name;
-      const type = item.dataset.type;
-      const status = item.dataset.status;
+    if (roomType) url.searchParams.set("roomType", roomType);
+    else url.searchParams.delete("roomType");
 
-      const matchesSearch = name.includes(searchText);
-      const matchesStatus = statusValue === "ALL" || status === statusValue;
-      const matchesType = typeRoomValue === "ALL" || type === typeRoomValue;
+    if (roomName) url.searchParams.set("roomName", roomName);
+    else url.searchParams.delete("roomName");
 
-      if (matchesSearch && matchesStatus && matchesType) {
-        item.classList.remove("hidden");
-        visibleCount++;
-      } else {
-        item.classList.add("hidden");
-      }
-    });
+    url.searchParams.set("page", 1);
 
-    if (visibleCount === 0) {
-      noResult.classList.remove("hidden");
-      noResult.classList.add("flex");
-    } else {
-      noResult.classList.add("hidden");
-      noResult.classList.remove("flex");
-    }
+    window.location.href = url.toString();
   }
 
-  searchRoom.addEventListener("input", filterRooms);
-  filterStatus.addEventListener("change", filterRooms);
-  filterTypeRoom.addEventListener("change", filterRooms);
+  if (applyBtn) {
+    applyBtn.addEventListener("click", applyFilter);
+  }
+
+  if (roomNameInput) {
+    roomNameInput.addEventListener("keypress", function (e) {
+      if (e.key === "Enter") {
+        applyFilter();
+      }
+    });
+  }
+
+  const params = new URLSearchParams(window.location.search);
+  if (statusSelect && params.get("status")) statusSelect.value = params.get("status");
+  if (roomTypeSelect && params.get("roomType")) roomTypeSelect.value = params.get("roomType");
+  if (roomNameInput && params.get("roomName")) roomNameInput.value = params.get("roomName");
 });
 
 // RENTAL

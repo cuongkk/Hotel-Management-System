@@ -1,8 +1,11 @@
 const pool = require("../configs/database.config");
+const roomModel = require("../models/room.model");
 
 module.exports.listGetReport = async (req, res) => {
   try {
     const { roomType, roomName } = req.query;
+
+    const roomTypesList = await roomModel.getAllRoomTypes();
 
     let sql = `
       SELECT 
@@ -44,7 +47,6 @@ module.exports.listGetReport = async (req, res) => {
     sql += ` GROUP BY DATE_TRUNC('month', rs.started_at)
              ORDER BY DATE_TRUNC('month', rs.started_at);`;
 
-
     const result = await pool.query(sql, values);
     const reports = result.rows;
 
@@ -52,10 +54,10 @@ module.exports.listGetReport = async (req, res) => {
       pageTitle: "Lập báo cáo",
       roomType,
       roomName,
+      roomTypesList: roomTypesList,
       reports,
       reportsJson: JSON.stringify(reports),
     });
-
   } catch (err) {
     console.error("DB error:", err);
     res.status(500).send("Server error");

@@ -2,112 +2,111 @@ extends ../layouts/default.pug
 include ../mixins/checkbox-30.pug
 
 block main
-  main.main
-    h1.box-title Quản lý phòng
+	main.main
+		h1.box-title Quản lý phòng
 
-    .main1
-      .section-4
-        .inner-wrap
-          .inner-item.inner-label
-            i.fa-solid.fa-filter
-            |  Bộ lọc
+		.main1
+			.section-4
+				.inner-wrap
+					.inner-item.inner-label
+						i.fa-solid.fa-filter
+						|  Bộ lọc
 
-          .inner-item
-            select(id="statusSelect")
-              option(value="") Trạng thái
-              option(value="AVAILABLE") Hoạt động
-              option(value="OCCUPIED") Đang thuê
-              option(value="INACTIVE") Tạm dừng
+					.inner-item
+						select(id="statusSelect")
+							option(value="") Tất cả trạng thái
+							option(value="AVAILABLE" selected=(filters.status == 'AVAILABLE')) Hoạt động
+							option(value="OCCUPIED" selected=(filters.status == 'OCCUPIED')) Đang thuê
+							option(value="MAINTENANCE" selected=(filters.status == 'MAINTENANCE')) Tạm dừng
 
-          .inner-item
-            select(id="roomTypeSelect")
-              option(value="") Loại phòng
-              option(value="Standard") Standard
-              option(value="Superior") Superior
-              option(value="Deluxe") Deluxe
+					.inner-item
+						select(id="roomTypeSelect")
+							option(value="") Tất cả loại phòng
+							if roomTypesList
+								each type in roomTypesList
+										option(value=type.type_name selected=(filters.roomType == type.type_name)) #{type.type_name}
+							else
+								option(value="Standard" selected=(filters.roomType == 'Standard')) Standard
+								option(value="Superior" selected=(filters.roomType == 'Superior')) Superior
+								option(value="Deluxe" selected=(filters.roomType == 'Deluxe')) Deluxe
 
-          .inner-item.inner-reset
-            button(type="button" id="applyBtnForRoom") Áp dụng
+					.inner-item.inner-reset
+						button(type="button" id="applyBtnForRoom") Áp dụng
 
-      .section-5
-        .inner-wrap
-          .inner-search
-            i.fa-solid.fa-magnifying-glass
-            input(
-              type="text"
-              id="roomNameInput"
-              placeholder="Tìm kiếm tên phòng"
-            )
+			.section-5
+				.inner-wrap
+					.inner-search
+						i.fa-solid.fa-magnifying-glass
+						input(
+							type="text"
+							id="roomNameInput"
+							placeholder="Tìm kiếm tên phòng"
+							value=filters.roomName 
+						)
 
-          .inner-button-create
-            a(href="/room/create") + Thêm phòng
+					.inner-button-create
+						a(href="/room/create") + Thêm phòng
 
-    .section-6
-      .table-2
-        table
-          thead
-            tr
-              //th.text-left Mã phòng
-              th.text-left Tên phòng
-              th.text-left Loại phòng
-              th.text-center Số khách tối đa
-              th.text-center Đơn giá
-              th.text-center Trạng thái
-              th.text-left Hành động
-              
-          tbody
-            if rooms && rooms.length
-              each room in rooms
-                tr
-                  //td.text-left= room.room_id
-                  td.text-left= room.room_name
-                  td.text-left= room.room_type
-                  td.text-center= room.max_guests
-                  td.text-center #{room.base_price.toLocaleString()} VND
-                  td.text-center
-                    if room.status === "AVAILABLE"
-                      span.status.status-green Hoạt động
-                    else if room.status === "OCCUPIED"
-                      span.status.status-orange Đang thuê
-                    else
-                      span.status.status-red Tạm dừng
-                  td.text-left= room.note
-                    .box-actions
-                      a(
-                        href=`/room/update/${room.room_id}`
-                        class="inner-edit"
-                      )
-                        i.fa-solid.fa-pen-to-square
+		.section-6
+			.table-2
+				table
+					thead
+						tr
+							//th.text-left Mã phòng
+							th.text-left Tên phòng
+							th.text-left Loại phòng
+							th.text-center Số khách tối đa
+							th.text-center Đơn giá
+							th.text-center Trạng thái
+							th.text-left Hành động
+							
+					tbody
+						if rooms && rooms.length
+							each room in rooms
+								tr
+									//td.text-left= room.room_id
+									td.text-left= room.room_name
+									td.text-left= room.room_type
+									td.text-center= room.max_guests
+									td.text-center #{room.base_price.toLocaleString()} VND
+									td.text-center
+										if room.status === "AVAILABLE"
+											span.status.status-green Hoạt động
+										else if room.status === "OCCUPIED"
+											span.status.status-orange Đang thuê
+										else
+											span.status.status-red Tạm dừng
+									td.text-left= room.note
+										.box-actions
+											a(
+												href=`/room/update/${room.room_id}`
+												class="inner-edit"
+											)
+												i.fa-solid.fa-pen-to-square
 
-                      form(
-                        action=`/room/delete/${room.room_id}`
-                        method="POST"
-                        onsubmit="return confirm('Bạn có chắc chắn muốn xóa phòng này không?');"
-                        style="display:inline;"
-                      )
-                        //- button(
-                        //-   type="submit"
-                        //-   class="inner-remove"
-                        //-   style="background:none; border:none; cursor:pointer;"
-                        //- )
-                        //-   i.fa-solid.fa-trash-can
-                  
-            else
-              tr
-                td(colspan="7" style="text-align:center") Không có dữ liệu
+											form(
+												action=`/room/delete/${room.room_id}`
+												method="POST"
+												onsubmit="return confirm('Bạn có chắc chắn muốn xóa phòng này không?');"
+												style="display:inline;"
+											)
+									
+						else
+							tr
+								td(colspan="7" style="text-align:center") Không có dữ liệu
 
-      .pagination
-        select.inner-pagination(onchange="location.href=this.value")
-          - for (let p = 1; p <= totalPages; p++)
-            option(
-              value=`/rooms?roomName=${encodeURIComponent(filters.roomName || '')}&status=${encodeURIComponent(filters.status || '')}&roomType=${encodeURIComponent(filters.roomType || '')}&page=${p}&pageSize=${pageSize}`
-              selected=(p === page)
-            ) Trang #{p}
+			.pagination
+				select.inner-pagination(onchange="location.href=this.value")
+					- for (let p = 1; p <= totalPages; p++)
+						option(
+							value=`/room?roomName=${encodeURIComponent(filters.roomName || '')}&status=${encodeURIComponent(filters.status || '')}&roomType=${encodeURIComponent(filters.roomType || '')}&page=${p}&pageSize=${pageSize}`
+							selected=(p === page)
+						) Trang #{p}
 
-        .inner-next
-          if page > 1
-            a(href=`/rooms?roomName=${encodeURIComponent(filters.roomName || '')}&status=${encodeURIComponent(filters.status || '')}&roomType=${encodeURIComponent(filters.roomType || '')}&page=${page - 1}&pageSize=${pageSize}`)
-              i.fa-solid.fa-chevron-left
-          if page < totalPages
-            a(href=`/rooms?roomName=${encodeURIComponent(filters.roomName || '')}&status=${encodeURIComponent(filters.status || '')}&roomType=${encodeURIComponent(filters.roomType || '')}&page=${page + 1}&pageSize=${pageSize}`)
-              i.fa-solid.fa-chevron-right
+				.inner-next
+					if page > 1
+						a(href=`/room?roomName=${encodeURIComponent(filters.roomName || '')}&status=${encodeURIComponent(filters.status || '')}&roomType=${encodeURIComponent(filters.roomType || '')}&page=${page - 1}&pageSize=${pageSize}`)
+							i.fa-solid.fa-chevron-left
+					if page < totalPages
+						a(href=`/room?roomName=${encodeURIComponent(filters.roomName || '')}&status=${encodeURIComponent(filters.status || '')}&roomType=${encodeURIComponent(filters.roomType || '')}&page=${page + 1}&pageSize=${pageSize}`)
+							i.fa-solid.fa-chevron-right

@@ -179,7 +179,6 @@ module.exports.resetPasswordPost = async (req, res) => {
     }
 
     const { email, type } = req.account || {};
-    console.log("resetPasswordPost account:", req.account);
     if (!email || type !== "reset") {
       return res.status(401).json({ result: "error", message: "Token không hợp lệ hoặc không đúng mục đích" });
     }

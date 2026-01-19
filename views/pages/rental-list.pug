@@ -19,10 +19,9 @@ block main
 					.inner-item
 						select(id="roomTypeSelect")
 							option(value="") Loại phòng
-							option(value="Standard") Loại Standard
-							option(value="Superior") Loại Superior
-							option(value="Deluxe") Loại Deluxe
-
+							if roomTypesList
+								each type in roomTypesList
+										option(value=type.type_name selected=(filters.roomType == type.type_name)) #{type.type_name}
 					.inner-item.inner-reset
 						button(type="button" id="applyBtnForRental") Áp dụng
 			//- End Section 4
@@ -73,7 +72,7 @@ block main
 										if room.status === "AVAILABLE"
 											div="—"
 										else if room.status === "OCCUPIED"
-											div= room.eceptionis || "—"
+											div= room.receptionist || "—"
 										else
 											div="—"
 									td.text-left

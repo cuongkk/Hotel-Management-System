@@ -142,7 +142,7 @@ block main
 														div(class="room-menu-dropdown hidden absolute right-0 top-9 w-64 bg-white rounded-lg shadow-xl overflow-hidden z-30 origin-top-right")
 
 																if room.status === 'AVAILABLE'
-																		a(href=`#` class="block px-4 py-2 text-sm text-green-600 hover:bg-gray-200 transition flex items-center gap-2")
+																		a(href=`/rental/create?roomId=${room.id}` class="block px-4 py-2 text-sm text-green-600 hover:bg-gray-200 transition flex items-center gap-2")
 																				i(class="fa-solid fa-file-signature w-4")
 																				| Lập phiếu thuê
 																else if room.status === 'OCCUPIED'

@@ -12,6 +12,4 @@ router.get("/update/:id", roomController.showUpdate);
 
 router.post("/update/:id", roomController.update);
 
-router.post("/delete/:id", roomController.delete);
-
 module.exports = router;

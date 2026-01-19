@@ -13,19 +13,16 @@ block main
 					.inner-item
 						select(id="roomType")
 							option(value="") Loại phòng
-							option(value="Standard") Loại Standard
-							option(value="Superior") Loại Superior
-							option(value="Deluxe") Loại Deluxe
+							if roomTypesList
+								each type in roomTypesList
+										option(value=type.type_name selected=(roomType == type.type_name)) #{type.type_name}
 					.inner-item.inner-reset 
 						button(type="button" id="applyBtnForReport") Áp dụng
-			//- End Section 4
-			//- Section 5
 			.section-5
 				.inner-wrap
 					.inner-search
 						<i class="fa-solid fa-magnifying-glass"></i>
 						input(type="text" id="roomName" placeholder="Tìm kiếm tên phòng")
-			//- End Section 5
 
 
 		.section-7
