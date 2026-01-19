@@ -155,18 +155,18 @@ document.addEventListener("DOMContentLoaded", () => {
       container.appendChild(newRow);
     });
 
-    // Xóa hàng (Giữ nguyên code cũ của bạn)
-    container.addEventListener("click", (e) => {
-      const btnRemove = e.target.closest(".inner-remove");
-      if (btnRemove) {
-        const rows = container.querySelectorAll(".row-item");
-        if (rows.length > 1) {
-          btnRemove.closest(".row-item").remove();
-        } else {
-          alert("Phải giữ lại ít nhất 1 dòng!");
-        }
-      }
-    });
+    // // Xóa hàng (Giữ nguyên code cũ của bạn)
+    // container.addEventListener("click", (e) => {
+    //   const btnRemove = e.target.closest(".inner-remove");
+    //   if (btnRemove) {
+    //     const rows = container.querySelectorAll(".row-item");
+    //     if (rows.length > 1) {
+    //       btnRemove.closest(".row-item").remove();
+    //     } else {
+    //       alert("Phải giữ lại ít nhất 1 dòng!");
+    //     }
+    //   }
+    // });
   };
 
   handleDynamicRows("btn-add-customer", "#form-customer-types .inner-list", true);
@@ -281,6 +281,56 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 // End Settings
+
+// ROOM
+
+document.addEventListener("DOMContentLoaded", function () {
+  const searchRoom = document.getElementById("searchRoom");
+  const filterStatus = document.getElementById("filterStatus");
+  const filterTypeRoom = document.getElementById("filterTypeRoom");
+  const roomItems = document.querySelectorAll(".room-item");
+  const noResult = document.getElementById("noResult");
+
+  if (!searchRoom || !filterStatus || !filterTypeRoom) return;
+
+  function filterRooms() {
+    const searchText = searchRoom.value.toLowerCase().trim();
+    const statusValue = filterStatus.value;
+    const typeRoomValue = filterTypeRoom.value;
+
+    let visibleCount = 0;
+
+    roomItems.forEach((item) => {
+      const name = item.dataset.name;
+      const type = item.dataset.type;
+      const status = item.dataset.status;
+
+      const matchesSearch = name.includes(searchText);
+      const matchesStatus = statusValue === "ALL" || status === statusValue;
+      const matchesType = typeRoomValue === "ALL" || type === typeRoomValue;
+
+      if (matchesSearch && matchesStatus && matchesType) {
+        item.classList.remove("hidden");
+        visibleCount++;
+      } else {
+        item.classList.add("hidden");
+      }
+    });
+
+    if (visibleCount === 0) {
+      noResult.classList.remove("hidden");
+      noResult.classList.add("flex");
+    } else {
+      noResult.classList.add("hidden");
+      noResult.classList.remove("flex");
+    }
+  }
+
+  searchRoom.addEventListener("input", filterRooms);
+  filterStatus.addEventListener("change", filterRooms);
+  filterTypeRoom.addEventListener("change", filterRooms);
+});
+
 // RENTAL
 
 document.addEventListener("DOMContentLoaded", () => {
