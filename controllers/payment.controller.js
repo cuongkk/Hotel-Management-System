@@ -1,17 +1,6 @@
 const { query } = require("../configs/database.config");
+const { calculateNights } = require("../helpers/calculateNights.helper");
 
-// Hàm phụ trợ tính ngày
-function calculateNights(checkIn, checkOut = new Date()) {
-  const inDate = new Date(checkIn);
-  const outDate = new Date(checkOut);
-  inDate.setHours(0, 0, 0, 0);
-  outDate.setHours(0, 0, 0, 0);
-  const MS_PER_DAY = 1000 * 60 * 60 * 24;
-  const diffTime = outDate - inDate;
-  return Math.max(1, Math.ceil(diffTime / MS_PER_DAY));
-}
-
-// [GET] /checkout/:room_id
 module.exports.payment = async (req, res) => {
   try {
     const roomId = req.params.room_id;
@@ -46,10 +35,10 @@ module.exports.payment = async (req, res) => {
     const data = result.rows[0];
     const stayDays = calculateNights(data.started_at);
     
-    // Logic tính tiền (Server-side calculation)
+    // calculate total base price
     let totalPrice = Number(data.snap_price) * stayDays;
     
-    // Phụ thu ghép người
+    // surcharge for extra guests
     let surchargeTotal = 0;
     const currentGuestCount = data.customer_names ? data.customer_names.length : 0;
     if (currentGuestCount >= Number(data.snap_extra_guest_threshold)) {
@@ -57,7 +46,7 @@ module.exports.payment = async (req, res) => {
     }
     totalPrice += surchargeTotal;
     
-    // Phụ thu hệ số (khách nước ngoài...)
+    // surcharge for foreign guests
     console.log(data.snap_surcharge_ratio);
     if (data.has_foreign) {
       totalPrice *= Number(data.snap_surcharge_coefficient);

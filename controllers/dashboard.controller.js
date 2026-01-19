@@ -25,7 +25,7 @@ module.exports.dashboard = async (req, res) => {
     `, [start, end]);
 
     const getDetailRooms = () => query(`
-      SELECT room_name AS name, type_name AS type, base_price AS price, status
+      SELECT room_id AS id, room_name AS name, type_name AS type, base_price AS price, status
       FROM rooms JOIN room_types on rooms.room_type_id = room_types.room_type_id
       ORDER BY rooms.room_id
     `);
@@ -37,11 +37,18 @@ module.exports.dashboard = async (req, res) => {
       FROM users
     `);
 
-    const [Rooms, Revenue, detailRooms, Staffs] = await Promise.all([
+    const getRoomTypes = () => query(`
+      SELECT type_name
+      FROM room_types
+      ORDER BY type_name 
+    `)
+
+    const [Rooms, Revenue, detailRooms, Staffs, RoomTypes] = await Promise.all([
         getRooms(),
         getRevenue(startDate, endDate), 
         getDetailRooms(),
-        getStaffs()
+        getStaffs(),
+        getRoomTypes()
       ]);
 
     const totalAvailableRooms = Number(Rooms.rows[0].available) || 0;
@@ -68,7 +75,8 @@ module.exports.dashboard = async (req, res) => {
       filter: {
         startDate,
         endDate
-      }
+      },
+      RoomTypes: RoomTypes.rows
     });
 
 
