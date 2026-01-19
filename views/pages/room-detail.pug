@@ -25,10 +25,6 @@ block main
 					input(type="text" id="maxGuests" name="maxGuests" placeholder="Nhập số khách tối đa")
 					button.inner-change
 						<i class="fa-solid fa-pen-to-square"></i>
-				.inner-group.inner-two-col
-					label.inner-label(for="avatar") Ảnh đại diện
-					.inner-upload-image
-						input(type="file" id="avatar" name="avatar" filepond-image)
 				.inner-group.inner-note 
 					label.inner-label(for="note") Ghi chú
 					textarea(id="note" name="note" placeholder="Nhập ghi chú cho phòng")
@@ -36,5 +32,5 @@ block main
 					button(style="color: black; background-color: #FFAAAA;") Xóa
 					button Lưu
 			.inner-back 
-				a(href="") Quay lại danh sách
+				a(href="/room") Quay lại danh sách
 		

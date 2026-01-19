@@ -8,7 +8,7 @@ document.addEventListener("DOMContentLoaded", () => {
     menuList.forEach((item) => {
       const pathName = item.getAttribute("href");
       const pathNameSplit = pathName.split("/");
-      if (pathNameCurrentSplit[1] == pathNameSplit[1] && pathNameCurrentSplit[2] === pathNameSplit[2]) {
+      if (pathNameCurrentSplit[0] == pathNameSplit[0] && pathNameCurrentSplit[1] === pathNameSplit[1]) {
         item.classList.add("active");
       }
     });
