@@ -18,7 +18,10 @@ block main
 					input(type="text" id="price" name="price" value=`${room.price.toLocaleString()} VND` readonly)
 				.inner-group 
 					label.inner-label(for="startDate") Ngày bắt đầu thuê
-					input(type="date" id="startDate" name="startDate" placeholder="Nhập ngày bắt đầu thuê")
+					input(type="date" id="startDate" name="startDate" placeholder="Nhập ngày bắt đầu thuê" required)
+				.inner-group 
+					label.inner-label(for="guestCount") Số lượng khách
+					input(type="number" id="guestCount" name="guestCount" min="1" max=room.max_guests value="1")
 				.inner-group.inner-two-col
 					label.inner-label Thông tin khách hàng
 					table.inner-table
@@ -29,45 +32,7 @@ block main
 								th Loại khách 
 								th Số CMND/CCCD
 								th Số điện thoại
-						tbody
-							tr  
-								td 1
-								td 
-									input(type="text" name="customers[0][name]")
-								td 
-									select(name="customers[0][type]")
-										option(value="DOM") Nội địa
-										option(value="FOR") Nước ngoài
-								td 
-									input(type="text" name="customers[0][idCard]")
-								td 
-									input(type="text" name="customers[0][phone]")
-
-							tr  
-								td 2
-								td 
-									input(type="text" name="customers[1][name]")
-								td 
-									select(name="customers[1][type]")
-										option(value="DOM") Nội địa
-										option(value="FOR") Nước ngoài
-								td 
-									input(type="text" name="customers[1][idCard]")
-								td 
-									input(type="text" name="customers[1][phone]")
-
-							tr  
-								td 3
-								td 
-									input(type="text" name="customers[2][name]")
-								td 
-									select(name="customers[2][type]")
-										option(value="DOM") Nội địa
-										option(value="FOR") Nước ngoài
-								td 
-									input(type="text" name="customers[2][idCard]")
-								td 
-									input(type="text" name="customers[2][phone]")
+						tbody#customerRows
 
 				.inner-button.inner-two-col(style="display: flex; justify-content: space-between;")
 					button(type="button" style="color: black; background-color: #FFAAAA;") Hủy bỏ
