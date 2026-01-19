@@ -1,55 +1,35 @@
 extends ../layouts/default.pug
+include ../mixins/checkbox-30.pug
 
 block main
-  main.main
-    h1.box-title Thêm phòng
-
-    .section-8
-      form(
-        action="/room/create"
-        method="POST"
-        id="room-create-form"
-        enctype="multipart/form-data"
-      )
-        //- Số phòng
-        .inner-group
-          label.inner-label(for="room_id") Số phòng
-          input(type="text" id="room_id" name="room_id" required)
-
-        //- Loại phòng
-        .inner-group
-          label.inner-label(for="room_type_id") Loại phòng
-          select(id="room_type_id" name="room_type_id" required)
-            option(value="") Chọn loại phòng
-            option(value="1") Loại A
-            option(value="2") Loại B
-            option(value="3") Loại C
-
-        //- Lễ tân phụ trách
-        .inner-group
-          label.inner-label(for="receptionist") Lễ tân phụ trách
-          select(id="receptionist" name="receptionist" required)
-            option(value="") Chọn lễ tân
-            option(value="le_van_a") Lê Văn A
-            option(value="nguyen_thi_b") Nguyễn Thị B
-
-        .inner-group
-          label.inner-label(for="room_images") Ảnh phòng
-          input(
-            type="file"
-            id="room_images"
-            name="room_images"
-            accept="image/*"
-            multiple
-          )
+	main.main
+		h1.box-title Thêm phòng
+		.section-8
+			form(action="" id="room-create-form")
+				.inner-group 
+					label.inner-label(for="name") Tên phòng
+					input(type="text" id="name" name="name" placeholder="Nhập tên phòng")
+				.inner-group 
+					label.inner-label(for="type") Loại phòng
+					select(id="type" name="type" defaultValue="Chọn loại phòng")
+						option(value="") Chọn loại phòng
+						option(value="") Loại A
+						option(value="") Loại B
+				.inner-group 
+					label.inner-label(for="price") Đơn giá
+					input(type="text" id="price" name="price" placeholder="Nhập giá phòng")
+				.inner-group 
+					label.inner-label(for="maxGuests") Số khách tối đa
+					input(type="text" id="maxGuests" name="maxGuests" placeholder="Nhập số khách tối đa")
+				.inner-group.inner-two-col
+					label.inner-label(for="avatar") Ảnh đại diện
+					.inner-upload-image
+						input(type="file" id="avatar" name="avatar" filepond-image)
+				.inner-group.inner-note 
+					label.inner-label(for="note") Ghi chú
+					textarea(id="note" name="note" placeholder="Nhập ghi chú cho phòng")
+				.inner-button.inner-two-col
+					button Lưu
+			.inner-back 
+				a(href="") Quay lại danh sách
 		
-        //- Ghi chú
-        .inner-group.full-width
-          label.inner-label(for="note") Ghi chú
-          textarea(id="note" name="note")
-
-        .inner-button
-          button(type="submit") Lưu
-
-      .inner-back
-        a(href="/rooms") Quay lại danh sách

@@ -2,57 +2,79 @@ extends ../layouts/default.pug
 include ../mixins/checkbox-30.pug
 
 block main
-	main.main
-		h1.box-title Cài đặt
-		.section-8
-			form(action="" id="room-create-form")
-				.inner-group 
-					label.inner-label(for="price") Phụ thu
-					input(type="text" id="price" name="price" value="1.5")
-					button.inner-change
-						<i class="fa-solid fa-pen-to-square"></i>
-				.inner-group.inner-two-col(style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px;	")
-					label.inner-label(for="type") Loại khách
-					label.inner-label(for="num") Hệ số
-					label.inner-label(for="delete")
-					label.inner-label(for="note")
-					.inner-group 
-						input(type="text" id="price" name="price" value="Loại A")
-						button.inner-change(style="top:30% ")
-							<i class="fa-solid fa-pen-to-square"></i>
-					.inner-group 
-						input(type="text" id="price" name="price" value="1.5")
-						button.inner-change(style="top:30% ")
-							<i class="fa-solid fa-pen-to-square"></i>
-					.inner-group(style="display: flex; justify-content: flex-start; align-items: center;")
-						button.inner-remove(style="color: #ef3826; background-color: #FFAAAA; height: 100%; width: 100px; border-radius: 5px; border: none; cursor: pointer;") 
-							<i class="fa-solid fa-trash-can"></i>
-				.inner-button.inner-two-col(style="display: flex; justify-content: flex-start;")
-					button Thêm loại khách
-				.inner-group.inner-two-col(style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px;	")
-					label.inner-label(for="type") Loại phòng
-					label.inner-label(for="price") Đơn giá
-					label.inner-label(for="quantity") Số phòng
-					label.inner-label(for="delete")
-					.inner-group 
-						input(type="text" id="price" name="price" value="Loại A")
-						button.inner-change(style="top:30% ")
-							<i class="fa-solid fa-pen-to-square"></i>
-					.inner-group 
-						input(type="text" id="price" name="price" value="150.000Đ")
-						button.inner-change(style="top:30% ")
-							<i class="fa-solid fa-pen-to-square"></i>
-					.inner-group 
-						input(type="text" id="price" name="price" value="10")
-						button.inner-change(style="top:30% ")
-							<i class="fa-solid fa-pen-to-square"></i>
-					.inner-group(style="display: flex; justify-content: flex-start; align-items: center;")
-						button.inner-remove(style="color: #ef3826; background-color: #FFAAAA; height: 100%; width: 100px; border-radius: 5px; border: none; cursor: pointer;") 
-							<i class="fa-solid fa-trash-can"></i>
-				.inner-button.inner-two-col(style="display: flex; justify-content: flex-start;")
-					button Thêm loại phòng
-				.inner-button.inner-two-col
-					button Lưu
-			.inner-back 
-				a(href="") Quay lại danh sách
-		
+  main.main
+    h1.box-title Cài đặt quy định giá
+
+    .section-8
+      // ===== PHỤ THU =====
+      h2.section-title Phụ thu
+
+      .inner-group
+        label.inner-label Khách nước ngoài
+        input(
+          type="text"
+          value="Nhân 1.5 lần giá phòng"
+          readonly
+        )
+
+      .inner-group
+        label.inner-label Khách thứ 3
+        input(
+          type="text"
+          value="Phụ thu thêm 25%"
+          readonly
+        )
+
+      // ===== QUY ĐỊNH SỐ KHÁCH =====
+      h2.section-title Quy định số khách
+
+      .inner-group
+        label.inner-label Số khách tối đa / phòng
+        input(
+          type="text"
+          value="Tối đa 3 khách"
+          readonly
+        )
+
+      // ===== GIÁ PHÒNG THEO LOẠI =====
+      h2.section-title Giá phòng theo loại
+
+      .inner-group.inner-two-col(
+        style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px;"
+      )
+        label.inner-label Loại phòng
+        label.inner-label Đơn giá (VND)
+        label.inner-label Ghi chú
+
+        // ===== LOẠI A =====
+        .inner-group
+          input(type="text" value="Loại A" readonly)
+
+        .inner-group
+          input(type="text" value="150.000" readonly)
+
+        .inner-group
+          input(type="text" value="Phòng tiêu chuẩn" readonly)
+
+        // ===== LOẠI B =====
+        .inner-group
+          input(type="text" value="Loại B" readonly)
+
+        .inner-group
+          input(type="text" value="170.000" readonly)
+
+        .inner-group
+          input(type="text" value="Phòng nâng cao" readonly)
+
+        // ===== LOẠI C =====
+        .inner-group
+          input(type="text" value="Loại C" readonly)
+
+        .inner-group
+          input(type="text" value="200.000" readonly)
+
+        .inner-group
+          input(type="text" value="Phòng cao cấp" readonly)
+
+    .inner-back
+      a(href="/") Quay lại danh sách

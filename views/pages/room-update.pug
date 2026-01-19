@@ -3,7 +3,7 @@ include ../mixins/checkbox-30.pug
 
 block main
   main.main
-    h1.box-title Mã phòng #{room.room_name}
+    h1.box-title Phòng #{room.room_name}
 
     .section-8
       form(
@@ -13,9 +13,8 @@ block main
       )
         input(type="hidden" name="_method" value="PUT")
 
-
-        //- Tên phòng
-        .inner-group 
+        // ================= TÊN PHÒNG =================
+        .inner-group
           label.inner-label(for="room_name") Tên phòng
           input(
             type="text"
@@ -25,78 +24,68 @@ block main
             required
           )
 
-        //- Loại phòng
-        .inner-group 
+        // ================= LOẠI PHÒNG =================
+        .inner-group
           label.inner-label(for="room_type_id") Loại phòng
           select(
             id="room_type_id"
             name="room_type_id"
+			value=room.room_type
             required
           )
             option(value="") Chọn loại phòng
-            option(
-              value="1"
-              selected=room.room_type_id == 1
-            ) Loại A
-            option(
-              value="2"
-              selected=room.room_type_id == 2
-            ) Loại B
+            option(value="1" selected=room.room_type==="Standard") Standard
+            option(value="2" selected=room.room_type==="Superior") Superior
+            option(value="3" selected=room.room_type==="Deluxe") Deluxe
 
-        //- Đơn giá
-        .inner-group 
-          label.inner-label(for="price") Đơn giá
+        // ================= ĐƠN GIÁ =================
+        .inner-group
+          label.inner-label(for="base_price") Đơn giá
           input(
             type="number"
-            id="price"
-            name="price"
-            value=room.price
+            id="base_price"
+            name="base_price"
+            value=room.base_price
+            required
           )
-          button.inner-change(type="button")
-            <i class="fa-solid fa-pen-to-square"></i>
 
-        //- Số khách tối đa
-        .inner-group 
+        // ================= SỐ KHÁCH =================
+        .inner-group
           label.inner-label(for="max_guests") Số khách tối đa
           input(
             type="number"
             id="max_guests"
             name="max_guests"
             value=room.max_guests
+            required
           )
-          button.inner-change(type="button")
-            <i class="fa-solid fa-pen-to-square"></i>
 
-        //- Ảnh đại diện
-        .inner-group.inner-two-col
-          label.inner-label(for="avatar") Ảnh đại diện
-          .inner-upload-image
-            input(
-              type="file"
-              id="avatar"
-              name="avatar"
-            )
+        // ================= TRẠNG THÁI =================
+        .inner-group
+          label.inner-label(for="status") Trạng thái
+          select(
+            id="status"
+            name="status"
+			value=room.status
+            required
+          )
+            option(value="AVAILABLE" selected=room.status==="AVAILABLE") Hoạt động
+            option(value="OCCUPIED" selected=room.status==="OCCUPIED") Đang có khách thuê
+            option(value="INACTIVE" selected=room.status==="INACTIVE") Tạm dừng
 
-        //- Ghi chú
-        .inner-group.inner-note 
+        // ================= GHI CHÚ =================
+        .inner-group.inner-note
           label.inner-label(for="note") Ghi chú
           textarea(
             id="note"
             name="note"
-          )= room.note
+          )= room.note || ""
 
-        //- Buttons
+        // ================= BUTTONS =================
         .inner-button.inner-two-col(
           style="display: flex; justify-content: space-between;"
         )
-          button(
-            type="submit"
-          ) Lưu
+          button(type="submit") Lưu
 
-          a(
-            href=`/room/delete/${room.room_id}`
-            style="color: black; background-color: #FFAAAA;"
-          ) Xóa
-
-    .inner-back 
+    .inner-back
       a(href="/room") Quay lại danh sách

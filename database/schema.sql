@@ -1,10 +1,3 @@
--- ========================= -- CREATE DATABASE -- ========================= 
-CREATE DATABASE hotel_management 
-	WITH OWNER = postgres 
-	ENCODING = 'UTF8' 
-	LC_COLLATE = 'vi_VN.UTF-8' 
-	LC_CTYPE = 'vi_VN.UTF-8' 
-	TEMPLATE = template0;
 
 -- =============================================
 -- 1. AUTHENTICATION & USERS
@@ -65,7 +58,7 @@ CREATE TABLE surcharge_rules (
 -- =============================================
 
 -- 3.1 Rooms
-CREATE TYPE room_status AS ENUM ('AVAILABLE', 'OCCUPIED', 'MAINTENANCE');
+CREATE TYPE room_status AS ENUM ('AVAILABLE', 'OCCUPIED', 'MAINTENANCE','REMOVED');
 
 CREATE TABLE rooms (
     room_id VARCHAR(10) PRIMARY KEY,
@@ -159,7 +152,7 @@ CREATE TABLE invoices (
     rental_slip_id INT UNIQUE REFERENCES rental_slips(rental_slip_id),
     created_by INT REFERENCES users(user_id),
     payer_name VARCHAR(100) NOT NULL,
-    payment_method VARCHAR(50);
+    payment_method VARCHAR(50),
     payment_date TIMESTAMP DEFAULT NOW(),
     total_days INT CHECK (total_days > 0),
     total_amount DECIMAL(15, 2) NOT NULL,
