@@ -2,143 +2,188 @@ extends ../layouts/default.pug
 include ../components/stat-card.pug
 
 block main
-    main.main
-        div(class="mb-8 flex flex-col md:flex-row md:items-center justify-between")
-            div
-                h1(class="text-2xl font-bold text-gray-800 tracking-tight") Tổng quan hệ thống
-                p(class="text-gray-500 text-sm mt-1") Chào mừng quay trở lại, đây là số liệu hôm nay.
-            
-            div(class="mt-4 md:mt-0")
-                button(class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium shadow-sm transition") 
-                    i(class="fa-solid fa-download mr-2")
-                    | Xuất báo cáo
+		main.main
+				div(class="mb-8 flex flex-col md:flex-row md:items-center justify-between")
+						div
+								h1(class="text-2xl font-bold text-gray-800 tracking-tight") Tổng quan hệ thống
+								p(class="text-gray-500 text-sm mt-1") Chào mừng quay trở lại, đây là số liệu hôm nay.
+						
+						div(class="mt-4 md:mt-0")
+							a(href="/report")
+								button(class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium shadow-sm transition") 
+										i(class="fa-solid fa-download mr-2")
+										| Xuất báo cáo
 
-        div(class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 mb-8")
-            +stat-card('Tổng số phòng', 'horizontal', Statistic.totalRooms, 'fa-solid fa-hotel', 'bg-blue-500', 'text-white')
-            +stat-card('Trống', 'horizontal', Statistic.totalAvailableRooms, 'fa-solid fa-check', 'bg-green-100', 'text-green-600')
-            +stat-card('Đang thuê', 'horizontal', Statistic.totalOccupiedRooms, 'fa-solid fa-key', 'bg-orange-100', 'text-orange-600')
-            +stat-card('Bảo trì', 'horizontal', Statistic.totalMaintenanceRooms, 'fa-solid fa-wrench', 'bg-red-100', 'text-red-600')
+				div(class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 mb-8")
+						+stat-card('Tổng số phòng', 'horizontal', Statistic.totalRooms, 'fa-solid fa-hotel', 'bg-blue-500', 'text-white')
+						+stat-card('Trống', 'horizontal', Statistic.totalAvailableRooms, 'fa-solid fa-check', 'bg-green-100', 'text-green-600')
+						+stat-card('Đang thuê', 'horizontal', Statistic.totalOccupiedRooms, 'fa-solid fa-key', 'bg-orange-100', 'text-orange-600')
+						+stat-card('Bảo trì', 'horizontal', Statistic.totalMaintenanceRooms, 'fa-solid fa-wrench', 'bg-red-100', 'text-red-600')
 
-        div(class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-10")            
-            div(class="lg:col-span-2 bg-white rounded-2xl shadow-sm border border-gray-100 p-6")
-                div(class="flex items-center justify-between mb-6")
-                    h2(class="text-lg font-bold text-gray-800") Tình hình nhân sự
-                    span(class="bg-gray-100 text-gray-600 text-xs px-2 py-1 rounded") Real-time
-                
-                div(class="grid grid-cols-1 lg:grid-cols-3 gap-6")
-                    +stat-card('Tổng nhân sự', 'vertical', Statistic.totalStaffs, 'fa-solid fa-users', 'bg-blue-500', 'text-white')
-                    +stat-card('Hoạt động', 'vertical', Statistic.totalActiveStaffs, 'fa-solid fa-user-check', 'bg-green-100', 'text-green-600')
-                    +stat-card('Nghỉ/Off', 'vertical', Statistic.totalInactiveStaffs, 'fa-solid fa-user-times', 'bg-red-100', 'text-red-600')
+				div(class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-10")            
+						div(class="lg:col-span-2 bg-white rounded-2xl shadow-sm border border-gray-100 p-6")
+								div(class="flex items-center justify-between mb-6")
+										h2(class="text-lg font-bold text-gray-800") Tình hình nhân sự
+										span(class="bg-gray-100 text-gray-600 text-xs px-2 py-1 rounded") Real-time
+								
+								div(class="flex flex-row flex-wrap justify-between gap-6")
+										+stat-card('Hoạt động', 'vertical', Statistic.totalActiveStaffs, 'fa-solid fa-user-check', 'bg-green-100', 'text-green-600')
+										+stat-card('Nghỉ/Off', 'vertical', Statistic.totalInactiveStaffs, 'fa-solid fa-user-times', 'bg-red-100', 'text-red-600')
+										+stat-card('Tổng nhân sự', 'vertical', Statistic.totalStaffs, 'fa-solid fa-users', 'bg-blue-500', 'text-white')                    
 
-            div(class="lg:col-span-1 bg-white rounded-2xl shadow-sm border border-gray-100 p-6 flex flex-col h-full gap-4")
-                div(class="mb-4 border-b border-gray-100 pb-4")
-                    h2(class="text-lg font-bold text-gray-800") Doanh thu
-                    p(class="text-xs text-gray-500") Lọc theo khoảng thời gian thực tế
-                
-                form(action="" method="GET" class="flex flex-col gap-3")
-                    div(class="grid grid-cols-2 gap-3")
-                        div
-                            label(class="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1 block") Từ ngày
-                            input#startDate(type="date" name="startDate" value=filter.startDate class="w-full bg-gray-50 border border-gray-200 text-gray-700 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 outline-none transition") 
-                        div
-                            label(class="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1 block") Đến ngày
-                            input#endDate(type="date" name="endDate" value=filter.endDate class="w-full bg-gray-50 border border-gray-200 text-gray-700 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 outline-none transition")
-                    
-                    button(type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-medium rounded-lg text-sm px-5 py-2.5 text-center transition-colors duration-200 flex justify-center items-center gap-2") 
-                        i(class="fa-solid fa-filter") 
-                        | Áp dụng bộ lọc
+						div(class="lg:col-span-1 bg-white rounded-2xl shadow-sm border border-gray-100 p-6 flex flex-col h-full gap-4")
+								div(class="mb-4 border-b border-gray-100 pb-4")
+										h2(class="text-lg font-bold text-gray-800") Doanh thu
+										p(class="text-xs text-gray-500") Lọc theo khoảng thời gian thực tế
+								
+								form(action="" method="GET" class="flex flex-col gap-3")
+										div(class="grid grid-cols-2 gap-3")
+												div
+														label(class="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1 block") Từ ngày
+														input#startDate(type="date" name="startDate" value=filter.startDate class="w-full bg-gray-50 border border-gray-200 text-gray-700 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 outline-none transition") 
+												div
+														label(class="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1 block") Đến ngày
+														input#endDate(type="date" name="endDate" value=filter.endDate class="w-full bg-gray-50 border border-gray-200 text-gray-700 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 outline-none transition")
+										
+										button(type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-medium rounded-lg text-sm px-5 py-2.5 text-center transition-colors duration-200 flex justify-center items-center gap-2") 
+												i(class="fa-solid fa-filter") 
+												| Áp dụng bộ lọc
 
-                div(class="relative group flex flex-col justify-center items-center bg-white shadow-sm p-6 overflow-hidden")
-                    p(class="text-sm text-gray-400 font-medium mb-1") Tổng doanh thu ước tính
-                    p(class="text-4xl font-extrabold text-emerald-600 tracking-tight group-hover:scale-110 transition-transform duration-300 ease-in-out") 
-                        | #{new Intl.NumberFormat('vi-VN').format(Statistic.totalRevenue)}
-                        span(class="text-xl text-emerald-500 ml-1") ₫
+								div(class="relative group flex flex-col justify-center items-center bg-white shadow-sm p-6 overflow-hidden")
+										p(class="text-sm text-gray-400 font-medium mb-1") Tổng doanh thu ước tính
+										p(class="text-4xl font-extrabold text-emerald-600 tracking-tight group-hover:scale-110 transition-transform duration-300 ease-in-out") 
+												| #{new Intl.NumberFormat('vi-VN').format(Statistic.totalRevenue)}
+												span(class="text-xl text-emerald-500 ml-1") ₫
 
-                    span(class="absolute top-0 left-0 h-0.5 w-0 bg-emerald-500 transition-all duration-200 group-hover:w-full")
-                    span(class="absolute top-0 right-0 h-0 w-0.5 bg-emerald-500 transition-all duration-100 delay-200 group-hover:h-full") 
-                    span(class="absolute bottom-0 right-0 h-0.5 w-0 bg-emerald-500 transition-all duration-200 delay-300 group-hover:w-full") 
-                    span(class="absolute bottom-0 left-0 h-0 w-0.5 bg-emerald-500 transition-all duration-100 delay-500 group-hover:h-full") 
+										span(class="absolute top-0 left-0 h-0.5 w-0 bg-emerald-500 transition-all duration-200 group-hover:w-full")
+										span(class="absolute top-0 right-0 h-0 w-0.5 bg-emerald-500 transition-all duration-100 delay-200 group-hover:h-full") 
+										span(class="absolute bottom-0 right-0 h-0.5 w-0 bg-emerald-500 transition-all duration-200 delay-300 group-hover:w-full") 
+										span(class="absolute bottom-0 left-0 h-0 w-0.5 bg-emerald-500 transition-all duration-100 delay-500 group-hover:h-full") 
 
-        div(class='block')
-            div(class="flex flex-col md:flex-row justify-between items-center mb-6 gap-8")
-                div(class="flex items-center gap-3")
-                    h2(class="text-xl font-bold text-gray-800") Sơ đồ phòng
-                    span(class="px-3 py-1 rounded-full bg-blue-100 text-blue-700 text-xs font-bold") Tổng: #{RoomMap.length}
-                
-                div(class="flex gap-3")
-                    select(id="filterStatus" class="bg-white text-gray-700 text-sm rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 p-2.5 outline-none cursor-pointer hover:bg-gray-50")
-                        option(value="ALL") Trạng thái
-                        option(value="AVAILABLE") Phòng trống
-                        option(value="OCCUPIED") Đang thuê
-                        option(value="MAINTENANCE") Bảo trì
+				div(class='block mb-56')
+						div(class="flex flex-col md:flex-row justify-between items-center mb-6 gap-8")
+								div(class="flex items-center gap-3")
+										h2(class="text-xl font-bold text-gray-800") Sơ đồ phòng
+										span(class="px-3 py-1 rounded-full bg-blue-100 text-blue-700 text-xs font-bold") Tổng: #{RoomMap.length}
+								
+								div(class="flex gap-3")
+										select(id="filterStatus" class="bg-white text-gray-700 text-sm rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 p-2.5 outline-none cursor-pointer hover:bg-gray-50")
+												option(value="ALL") Trạng thái
+												option(value="AVAILABLE") Phòng trống
+												option(value="OCCUPIED") Đang thuê
+												option(value="MAINTENANCE") Bảo trì
 
-                    select(id="filterTypeRoom" class="bg-white text-gray-700 text-sm rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 p-2.5 outline-none cursor-pointer hover:bg-gray-50")
-                        option(value="ALL") Loại phòng
-                        option(value="A") A
-                        option(value="B") B
-                        option(value="C") C
-                    
-                    div(class="relative w-64 rounded-lg shadow-sm")
-                        div(class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none")
-                            i(class="fa-solid fa-search text-gray-400")
-                        input(id="searchRoom" type="text" class="bg-white border border-gray-200 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full pl-10 p-2.5 outline-none" placeholder="Tìm số phòng")
+										select(id="filterTypeRoom" class="bg-white text-gray-700 text-sm rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 p-2.5 outline-none cursor-pointer hover:bg-gray-50")
+												option(value="ALL") Loại phòng
+												each type in RoomTypes 
+														option(value=type.type_name) #{type.type_name}
+										
+										div(class="relative w-64 rounded-lg shadow-sm")
+												div(class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none")
+														i(class="fa-solid fa-search text-gray-400")
+												input(id="searchRoom" type="text" class="bg-white border border-gray-200 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full pl-10 p-2.5 outline-none" placeholder="Tìm số phòng")
 
-            div(class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6")
-                each room in RoomMap
-                    - 
-                        let statusConfig = {
-                            'AVAILABLE': { 
-                                border: 'border-l-4 border-l-green-500',
-                                bgHover: 'hover:bg-gradient-to-r hover:from-green-500 hover:to-white',
-                                text: 'Sẵn sàng', 
-                                icon: 'fa-circle-check', 
-                                badgeClass: 'bg-green-300 text-green-700' 
-                            },
-                            'OCCUPIED': { 
-                                border: 'border-l-4 border-l-blue-500', 
-                                bgHover: 'hover:bg-gradient-to-r hover:from-blue-500 hover:to-white', 
-                                text: 'Đang thuê', 
-                                icon: 'fa-user-lock', 
-                                badgeClass: 'bg-blue-300 text-blue-700' 
-                            },
-                            'MAINTENANCE': { 
-                                border: 'border-l-4 border-l-red-500', 
-                                bgHover: 'hover:bg-gradient-to-r hover:from-red-500 hover:to-white', 
-                                text: 'Bảo trì', 
-                                icon: 'fa-screwdriver-wrench', 
-                                badgeClass: 'bg-red-300 text-red-700' 
-                            }
-                        }
-                        let currentStatus = statusConfig[room.status] || statusConfig['MAINTENANCE']
+						div(class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6")
+								each room in RoomMap
+										- 
+												let statusConfig = {
+														'AVAILABLE': { 
+																border: 'border-l-4 border-l-green-500',
+																bgHover: 'hover:bg-gradient-to-r hover:from-green-500 hover:to-white',
+																text: 'Sẵn sàng', 
+																icon: 'fa-circle-check', 
+																badgeClass: 'bg-green-300 text-green-700' 
+														},
+														'OCCUPIED': { 
+																border: 'border-l-4 border-l-blue-500', 
+																bgHover: 'hover:bg-gradient-to-r hover:from-blue-500 hover:to-white', 
+																text: 'Đang thuê', 
+																icon: 'fa-user-lock', 
+																badgeClass: 'bg-blue-300 text-blue-700' 
+														},
+														'MAINTENANCE': { 
+																border: 'border-l-4 border-l-red-500', 
+																bgHover: 'hover:bg-gradient-to-r hover:from-red-500 hover:to-white', 
+																text: 'Bảo trì', 
+																icon: 'fa-screwdriver-wrench', 
+																badgeClass: 'bg-red-300 text-red-700' 
+														}
+												}
+												let currentStatus = statusConfig[room.status] || statusConfig['MAINTENANCE']
 
-                    div(
-                        class=`room-item group relative bg-white rounded-xl shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300 ease-in-out cursor-pointer overflow-hidden ${currentStatus.border} ${currentStatus.bgHover}`
-                        data-status=room.status
-                        data-type=room.type
-                        data-name=room.name
-                    )
-                        
-                        div(class="block p-6 space-y-6")
-                            div(class="flex justify-between items-start")
-                                div
-                                    h3(class="text-lg font-bold text-gray-800")= room.name
-                                    p(class="text-xs font-medium text-gray-500 mt-1 flex items-center gap-1") 
-                                        i(class="fa-solid fa-layer-group")
-                                        | #{room.type}
+										div(
+												class=`room-item relative bg-white rounded-xl shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300 ease-in-out overflow-visible ${currentStatus.border} ${currentStatus.bgHover}`
+												data-status=room.status
+												data-type=room.type
+												data-name=room.name
+										)
+												
+												div(class="relative block p-6 space-y-6")
+														div(class="flex justify-between items-start")
+																div
+																		h3(class="text-lg font-bold text-gray-800")= room.name
+																		p(class="text-xs font-medium text-gray-500 mt-1 flex items-center gap-1") 
+																				i(class="fa-solid fa-layer-group")
+																				| #{room.type}
+														div(class="flex justify-between items-end")
+																div
+																		p(class="text-[10px] text-gray-400 font-bold uppercase tracking-wider") Giá phòng
+																		p(class="text-sm font-bold text-gray-700") 
+																				| #{new Intl.NumberFormat('vi-VN').format(room.price)}
+																				span(class="text-[10px] font-normal text-gray-400") đ/đêm
+																
+																span(class=`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold ${currentStatus.badgeClass}`)
+																		i(class=`fa-solid ${currentStatus.icon} text-[9px]`)
+																		| #{currentStatus.text}
 
-                            div(class="flex justify-between items-end")
-                                div
-                                    p(class="text-[10px] text-gray-400 font-bold uppercase tracking-wider") Giá phòng
-                                    p(class="text-sm font-bold text-gray-700") 
-                                        | #{new Intl.NumberFormat('vi-VN').format(room.price)}
-                                        span(class="text-[10px] font-normal text-gray-400") đ/đêm
-                                
-                                span(class=`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold ${currentStatus.badgeClass}`)
-                                    i(class=`fa-solid ${currentStatus.icon} text-[9px]`)
-                                    | #{currentStatus.text}
+												div(class="absolute top-0 right-0 z-50 pointer-events-auto")                          
+														button(class="room-menu-btn mt-4 mr-2 w-8 h-8 flex items-center justify-center bg-white text-gray-400 rounded-full hover:shadow-lg hover:text-blue-500 cursor-pointer")
+																i(class="fa-solid fa-ellipsis-vertical")
+														div(class="room-menu-dropdown hidden absolute right-0 top-9 w-64 bg-white rounded-lg shadow-xl overflow-hidden z-30 origin-top-right")
 
-            div(id="noResult" class="hidden flex-col items-center justify-center py-12 text-gray-400")
-                i(class="fa-solid fa-box-open text-4xl mb-3")
-                p Không tìm thấy phòng nào phù hợp
+																if room.status === 'AVAILABLE'
+																		a(href=`#` class="block px-4 py-2 text-sm text-green-600 hover:bg-gray-200 transition flex items-center gap-2")
+																				i(class="fa-solid fa-file-signature w-4")
+																				| Lập phiếu thuê
+																else if room.status === 'OCCUPIED'
+																		a(href=`/payment/${room.id}` class="block px-4 py-2 text-sm text-blue-600 hover:bg-gray-200 transition flex items-center gap-2")
+																				i(class="fa-solid fa-money-bill-1-wave w-4")
+																				| Thanh toán
+														
+						div(id="noResult" class="hidden flex-col items-center justify-center py-12 text-gray-400")
+								i(class="fa-solid fa-box-open text-4xl mb-3")
+								p Không tìm thấy phòng nào phù hợp
 
-    script(src="/assets/js/room-filter.js")
+		script(src="/assets/js/room-filter.js")
+		script.
+				document.addEventListener('DOMContentLoaded', function() {
+						// Lắng nghe sự kiện click trên toàn bộ document
+						document.addEventListener('click', function(e) {
+								const target = e.target;
+								const menuBtn = target.closest('.room-menu-btn');
+								const dropdown = target.closest('.room-menu-dropdown');
+
+								// 1. Nếu click vào nút 3 chấm
+								if (menuBtn) {
+										e.preventDefault();
+										e.stopPropagation(); // Ngăn chặn nổi bọt sự kiện
+										
+										const currentDropdown = menuBtn.nextElementSibling;
+										
+										// Đóng tất cả các menu khác đang mở
+										document.querySelectorAll('.room-menu-dropdown').forEach(d => {
+												if (d !== currentDropdown) d.classList.add('hidden');
+										});
+
+										// Toggle menu hiện tại
+										currentDropdown.classList.toggle('hidden');
+								}
+								
+								// 2. Nếu click ra ngoài menu -> Đóng tất cả
+								else if (!dropdown) {
+										document.querySelectorAll('.room-menu-dropdown').forEach(d => {
+												d.classList.add('hidden');
+										});
+								}
+						});
+				});
