@@ -14,7 +14,7 @@ block main
 						select(id="statusSelect")
 							option(value="") Trạng thái
 							option(value="AVAILABLE") Hoạt động
-							option(value="OCCUPIED") Đang tạo
+							option(value="OCCUPIED") Đang thuê
 							option(value="MAINTENANCE") Tạm dừng
 					.inner-item
 						select(id="roomTypeSelect")
@@ -66,16 +66,25 @@ block main
 										if room.status === "AVAILABLE"
 											span.status.status-green Hoạt động
 										else if room.status === "OCCUPIED"
-											span.status.status-yellow Đang tạo
+											span.status.status-orange Đang thuê
 										else
 											span.status.status-red Tạm dừng
-									td.text-left= room.receptionist || "—"
+									td.text-left
+										if room.status === "AVAILABLE"
+											div="—"
+										else if room.status === "OCCUPIED"
+											div= room.eceptionis || "—"
+										else
+											div="—"
 									td.text-left
 										.box-actions
-											a.inner-edit(href=`/rental/create?roomId=${room.room_id}`)
-												i.fa-solid.fa-pen-to-square
-											a.inner-remove(href=`/rental/delete`)
-												i.fa-solid.fa-trash-can
+											if room.status === "AVAILABLE"
+												a.inner-edit(href=`/rental/create?roomId=${room.room_id}`)
+													i.fa-solid.fa-pen-to-square
+											else
+												a.inner-edit.disabled(href="javascript:void(0)" style="pointer-events:none; opacity:0.5;")
+													i.fa-solid.fa-pen-to-square
+
 						else
 							tr
 							td(colspan="8" style="text-align:center") Không có dữ liệu

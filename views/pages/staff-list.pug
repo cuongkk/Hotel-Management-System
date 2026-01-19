@@ -20,7 +20,7 @@ block main
 						input(type="hidden" name="page" value="1")
 						input(type="hidden" name="pageSize" value=(pageSize || 10))
 					.inner-button-create
-						a(href="/staff/create") + Thêm khách hàng
+						a(href="/staff/create") + Thêm nhân viên
 
 		.section-6 
 			.table-2 
@@ -45,7 +45,11 @@ block main
 									td.text-center= s.username
 									td.text-center= s.phone_number
 									td.text-center= s.role
-									td.text-center= s.is_active ? "Hoạt động" : "Khóa"
+									td.text-center
+										if s.is_active
+											span.status.status-green Hoạt động
+										else
+											span.status.status-red Không hoạt động
 		.pagination
 			select.inner-pagination(onchange="location.href=this.value")
 				- for (let p = 1; p <= totalPages; p++)

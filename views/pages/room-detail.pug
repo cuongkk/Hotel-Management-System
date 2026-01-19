@@ -3,7 +3,7 @@ include ../mixins/checkbox-30.pug
 
 block main
 	main.main
-		h1.box-title Thêm phòng
+		h1.box-title Mã phòng R001
 		.section-8
 			form(action="" id="room-create-form")
 				.inner-group 
@@ -18,13 +18,18 @@ block main
 				.inner-group 
 					label.inner-label(for="price") Đơn giá
 					input(type="text" id="price" name="price" placeholder="Nhập giá phòng")
+					button.inner-change
+						<i class="fa-solid fa-pen-to-square"></i>
 				.inner-group 
 					label.inner-label(for="maxGuests") Số khách tối đa
 					input(type="text" id="maxGuests" name="maxGuests" placeholder="Nhập số khách tối đa")
+					button.inner-change
+						<i class="fa-solid fa-pen-to-square"></i>
 				.inner-group.inner-note 
 					label.inner-label(for="note") Ghi chú
 					textarea(id="note" name="note" placeholder="Nhập ghi chú cho phòng")
-				.inner-button.inner-two-col
+				.inner-button.inner-two-col(style="display: flex; justify-content: space-between;")
+					button(style="color: black; background-color: #FFAAAA;") Xóa
 					button Lưu
 			.inner-back 
 				a(href="/room") Quay lại danh sách
