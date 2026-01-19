@@ -12,8 +12,6 @@ app.use(express.urlencoded({ extended: true }));
 
 const indexRouter = require("./routes/index.route.js");
 
-const accountRouter = require("./routes/account.route.js");
-
 const cookieParser = require("cookie-parser");
 
 // Tạo biến toàn cục cho Backend
@@ -35,9 +33,6 @@ app.use(express.static(path.join(__dirname, "public")));
 app.use(cookieParser());
 
 app.use("/", indexRouter);
-
-app.use("/account", accountRouter);
-
 
 pool
   .connect()

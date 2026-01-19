@@ -35,9 +35,13 @@ block main
 						tbody#customerRows
 
 				.inner-button.inner-two-col(style="display: flex; justify-content: space-between;")
-					button(type="button" style="color: black; background-color: #FFAAAA;") Hủy bỏ
+					a(href=`/rental`)
+						button(type="button" style="color: black; background-color: #FFAAAA;") Hủy bỏ
 					button(type="submit" id="saveBtn") Lưu
 
 			.inner-back 
-				a(href=`/${pathAdmin}/tour/list`) Quay lại danh sách
-		
+				a(href=`/rental`) Quay lại danh sách
+
+
+	script.
+		window.customerTypes = !{JSON.stringify(customerTypes)};

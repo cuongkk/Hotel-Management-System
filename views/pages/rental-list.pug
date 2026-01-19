@@ -66,10 +66,14 @@ block main
 										if room.status === "AVAILABLE"
 											span.status.status-green Hoạt động
 										else if room.status === "OCCUPIED"
-											span.status.status-yellow Đang thuê
+											span.status.status-orange Đang thuê
+									td.text-left
+										if room.status === "AVAILABLE"
+											div="—"
+										else if room.status === "OCCUPIED"
+											div= room.eceptionis || "—"
 										else
-											span.status.status-red Tạm dừng
-									td.text-left= room.receptionist || "—"
+											div="—"
 									td.text-left
 										.box-actions
 											if room.status === "AVAILABLE"
@@ -78,8 +82,6 @@ block main
 											else
 												a.inner-edit.disabled(href="javascript:void(0)" style="pointer-events:none; opacity:0.5;")
 													i.fa-solid.fa-pen-to-square
-											a.inner-remove(href=`/rental/delete`)
-												i.fa-solid.fa-trash-can
 
 						else
 							tr
@@ -104,3 +106,5 @@ block main
 
 block scripts
 	script(src="/assets/js/script.js")
+
+
