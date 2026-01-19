@@ -41,7 +41,6 @@ SELECT
     '090' || LPAD(gs::text, 7, '0')                           AS phone_number
 FROM generate_series(1, 28) gs;
 
--- (Optional) OTP demo (Schema A: FK users(email))
 INSERT INTO password_reset_otps (email, otp, expire_at, created_at)
 SELECT
     u.email,
@@ -132,7 +131,7 @@ SELECT
 FROM generate_series(1, 600) gs;
 
 -- =========================================================
--- 5) HISTORY TABLES (optional)
+-- 5) HISTORY TABLES 
 -- =========================================================
 INSERT INTO room_type_history (room_type_id, changed_by, old_price, new_price, old_max_guests, new_max_guests, changed_at)
 VALUES
@@ -149,14 +148,22 @@ VALUES
 (1, 2, 0.25, 0.30, 3, 3, NOW() - interval '50 days');
 
 -- =========================================================
--- 6) RENTAL SLIPS (Schema A snapshot đầy đủ)
+-- 6) RENTAL SLIPS 
 -- =========================================================
 WITH rule AS (
     SELECT ratio, extra_guest_threshold
     FROM surcharge_rules
     WHERE rule_id = 1
 ),
-rooms_pick AS (
+rooms_list AS (
+    SELECT array_agg(room_id ORDER BY room_id) AS room_ids
+    FROM rooms
+),
+users_list AS (
+    SELECT array_agg(user_id ORDER BY user_id) AS user_ids
+    FROM users
+),
+room_info AS (
     SELECT r.room_id, rt.base_price, rt.max_guests
     FROM rooms r
     JOIN room_types rt ON rt.room_type_id = r.room_type_id
@@ -165,9 +172,6 @@ cust_pick AS (
     SELECT c.customer_id, ct.surcharge_coefficient
     FROM customers c
     JOIN customer_types ct ON ct.customer_type_id = c.customer_type_id
-),
-u AS (
-    SELECT user_id FROM users
 )
 INSERT INTO rental_slips (
     room_id, created_by, started_at, status,
@@ -175,24 +179,33 @@ INSERT INTO rental_slips (
     snap_surcharge_coefficient, snap_extra_guest_threshold, snap_surcharge_ratio
 )
 SELECT
-    rp.room_id,
-    (SELECT user_id FROM u ORDER BY random() LIMIT 1)                                  AS created_by,
-    -- started_at rải từ 2025-10-01 đến 2026-01-31 (để đủ dữ liệu trước hóa đơn)
+    rl.room_ids[1 + ((gs - 1) % array_length(rl.room_ids, 1))] AS room_id,
+
+    ul.user_ids[1 + ((gs - 1) % array_length(ul.user_ids, 1))] AS created_by,
+
     (timestamp '2025-10-01'
-      + random() * (timestamp '2026-01-31 23:59:59' - timestamp '2025-10-01'))         AS started_at,
+      + random() * (timestamp '2026-01-31 23:59:59' - timestamp '2025-10-01')) AS started_at,
+
     (CASE
         WHEN random() < 0.70 THEN 'COMPLETED'
         WHEN random() < 0.93 THEN 'ACTIVE'
         ELSE 'CANCELLED'
-     END)::rental_status                                                               AS status,
-    rp.base_price                                                                       AS snap_price,
-    rp.max_guests                                                                       AS snap_max_guests,
-    cp.surcharge_coefficient                                                            AS snap_surcharge_coefficient,
-    (SELECT extra_guest_threshold FROM rule)                                             AS snap_extra_guest_threshold,
-    (SELECT ratio FROM rule)                                                            AS snap_surcharge_ratio
+     END)::rental_status AS status,
+
+    ri.base_price AS snap_price,
+    ri.max_guests AS snap_max_guests,
+
+    cp.surcharge_coefficient AS snap_surcharge_coefficient,
+    (SELECT extra_guest_threshold FROM rule) AS snap_extra_guest_threshold,
+    (SELECT ratio FROM rule) AS snap_surcharge_ratio
 FROM generate_series(1, 900) gs
-JOIN LATERAL (SELECT * FROM rooms_pick ORDER BY random() LIMIT 1) rp ON TRUE
-JOIN LATERAL (SELECT * FROM cust_pick  ORDER BY random() LIMIT 1) cp ON TRUE;
+CROSS JOIN rooms_list rl
+CROSS JOIN users_list ul
+JOIN room_info ri
+  ON ri.room_id = rl.room_ids[1 + ((gs - 1) % array_length(rl.room_ids, 1))]
+JOIN LATERAL (
+    SELECT * FROM cust_pick ORDER BY random() LIMIT 1
+) cp ON TRUE;
 
 -- =========================================================
 -- 7) RENTAL DETAILS
