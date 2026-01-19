@@ -13,7 +13,6 @@ block main
       )
         input(type="hidden" name="_method" value="PUT")
 
-        // ================= TÊN PHÒNG =================
         .inner-group
           label.inner-label(for="room_name") Tên phòng
           input(
@@ -24,13 +23,12 @@ block main
             required
           )
 
-        // ================= LOẠI PHÒNG =================
         .inner-group
           label.inner-label(for="room_type_id") Loại phòng
           select(
             id="room_type_id"
             name="room_type_id"
-			value=room.room_type
+						value=room.room_type
             required
           )
             option(value="") Chọn loại phòng
@@ -38,7 +36,6 @@ block main
             option(value="2" selected=room.room_type==="Superior") Superior
             option(value="3" selected=room.room_type==="Deluxe") Deluxe
 
-        // ================= ĐƠN GIÁ =================
         .inner-group
           label.inner-label(for="base_price") Đơn giá
           input(
@@ -49,7 +46,6 @@ block main
             required
           )
 
-        // ================= SỐ KHÁCH =================
         .inner-group
           label.inner-label(for="max_guests") Số khách tối đa
           input(
@@ -60,7 +56,6 @@ block main
             required
           )
 
-        // ================= TRẠNG THÁI =================
         .inner-group
           label.inner-label(for="status") Trạng thái
           select(
@@ -70,10 +65,9 @@ block main
             required
           )
             option(value="AVAILABLE" selected=room.status==="AVAILABLE") Hoạt động
-            option(value="OCCUPIED" selected=room.status==="OCCUPIED") Đang có khách thuê
-            option(value="INACTIVE" selected=room.status==="INACTIVE") Tạm dừng
+            option(value="OCCUPIED" selected=room.status==="OCCUPIED") Đang thuê
+            option(value="MAINTENANCE" selected=room.status==="MAINTENANCE") Tạm dừng
 
-        // ================= GHI CHÚ =================
         .inner-group.inner-note
           label.inner-label(for="note") Ghi chú
           textarea(
@@ -81,7 +75,6 @@ block main
             name="note"
           )= room.note || ""
 
-        // ================= BUTTONS =================
         .inner-button.inner-two-col(
           style="display: flex; justify-content: space-between;"
         )

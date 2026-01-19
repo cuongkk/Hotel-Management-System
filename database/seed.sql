@@ -85,7 +85,7 @@ SELECT
     'R' || LPAD(gs::text, 4, '0'),
     'Phong S-' || (100 + gs),
     rt.room_type_id,
-    (ARRAY['AVAILABLE','OCCUPIED','MAINTENANCE'])[1 + floor(random()*3)]::room_status
+    (ARRAY['AVAILABLE','OCCUPIED'])[1 + floor(random()*2)]::room_status
 FROM generate_series(1, 10) gs
 JOIN room_types rt ON rt.type_name = 'Standard';
 
@@ -95,7 +95,7 @@ SELECT
     'R' || LPAD((gs+10)::text, 4, '0'),
     'Phong U-' || (200 + gs),
     rt.room_type_id,
-    (ARRAY['AVAILABLE','OCCUPIED','MAINTENANCE'])[1 + floor(random()*3)]::room_status
+    (ARRAY['AVAILABLE','OCCUPIED'])[1 + floor(random()*2)]::room_status
 FROM generate_series(1, 10) gs
 JOIN room_types rt ON rt.type_name = 'Superior';
 
@@ -105,7 +105,7 @@ SELECT
     'R' || LPAD((gs+20)::text, 4, '0'),
     'Phong D-' || (300 + gs),
     rt.room_type_id,
-    (ARRAY['AVAILABLE','OCCUPIED','MAINTENANCE'])[1 + floor(random()*3)]::room_status
+    (ARRAY['AVAILABLE','OCCUPIED'])[1 + floor(random()*2)]::room_status
 FROM generate_series(1, 10) gs
 JOIN room_types rt ON rt.type_name = 'Deluxe';
 

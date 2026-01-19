@@ -6,22 +6,19 @@ block main
     h1.box-title Quản lý phòng
 
     .main1
-      // ================= SECTION 4: FILTER =================
       .section-4
         .inner-wrap
           .inner-item.inner-label
             i.fa-solid.fa-filter
             |  Bộ lọc
 
-          // ---- Trạng thái ----
           .inner-item
             select(id="statusSelect")
               option(value="") Trạng thái
               option(value="AVAILABLE") Hoạt động
-              option(value="OCCUPIED") Đang có khách thuê
+              option(value="OCCUPIED") Đang thuê
               option(value="INACTIVE") Tạm dừng
 
-          // ---- Loại phòng ----
           .inner-item
             select(id="roomTypeSelect")
               option(value="") Loại phòng
@@ -31,9 +28,7 @@ block main
 
           .inner-item.inner-reset
             button(type="button" id="applyBtnForRoom") Áp dụng
-      // ================= END SECTION 4 =================
 
-      // ================= SECTION 5: SEARCH + CREATE =================
       .section-5
         .inner-wrap
           .inner-search
@@ -46,9 +41,7 @@ block main
 
           .inner-button-create
             a(href="/room/create") + Thêm phòng
-      // ================= END SECTION 5 =================
 
-    // ================= SECTION 6: TABLE =================
     .section-6
       .table-2
         table
@@ -60,7 +53,6 @@ block main
               th.text-center Số khách tối đa
               th.text-center Đơn giá
               th.text-center Trạng thái
-              th.text-left Ghi chú
               th.text-left Hành động
               
           tbody
@@ -76,11 +68,10 @@ block main
                     if room.status === "AVAILABLE"
                       span.status.status-green Hoạt động
                     else if room.status === "OCCUPIED"
-                      span.status.status-yellow Đang có khách thuê
+                      span.status.status-orange Đang thuê
                     else
                       span.status.status-red Tạm dừng
                   td.text-left= room.note
-                  td.text-left
                     .box-actions
                       a(
                         href=`/room/update/${room.room_id}`
@@ -94,18 +85,17 @@ block main
                         onsubmit="return confirm('Bạn có chắc chắn muốn xóa phòng này không?');"
                         style="display:inline;"
                       )
-                        button(
-                          type="submit"
-                          class="inner-remove"
-                          style="background:none; border:none; cursor:pointer;"
-                        )
-                          i.fa-solid.fa-trash-can
+                        //- button(
+                        //-   type="submit"
+                        //-   class="inner-remove"
+                        //-   style="background:none; border:none; cursor:pointer;"
+                        //- )
+                        //-   i.fa-solid.fa-trash-can
                   
             else
               tr
                 td(colspan="7" style="text-align:center") Không có dữ liệu
 
-      // ================= PAGINATION =================
       .pagination
         select.inner-pagination(onchange="location.href=this.value")
           - for (let p = 1; p <= totalPages; p++)
@@ -121,7 +111,3 @@ block main
           if page < totalPages
             a(href=`/rooms?roomName=${encodeURIComponent(filters.roomName || '')}&status=${encodeURIComponent(filters.status || '')}&roomType=${encodeURIComponent(filters.roomType || '')}&page=${page + 1}&pageSize=${pageSize}`)
               i.fa-solid.fa-chevron-right
-    // ================= END SECTION 6 =================
-
-block scripts
-  script(src="/assets/js/script.js")
