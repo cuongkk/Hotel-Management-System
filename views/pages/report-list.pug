@@ -35,11 +35,11 @@ block main
 		.section-7
 			- let title = "Biểu đồ báo cáo"
 			if roomType
-				- title += `: loại phòng ${roomType}`
-			if roomName
-				- title = "Biểu đồ tổng ngày thuê" + `, theo phòng ${roomName}`
+				- title += ` doanh thu theo loại phòng ${roomType}`
+			else if roomName
+				- title += ` tổng ngày thuê theo phòng ${roomName}`
 			else
-				- title = "Biểu đồ doanh thu"
+				- title += " doanh thu khách sạn"
 			h2.box-title= title
 
 			canvas(id="roomTypeChart" width="400" height="200")

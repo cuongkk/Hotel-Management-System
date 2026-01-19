@@ -7,8 +7,6 @@ module.exports.listGetReport = async (req, res) => {
     let sql = `
       SELECT 
         DATE_TRUNC('month', rs.started_at) AS month,
-        rt.type_name AS room_type,
-        r.room_name AS room_name,
     `;
 
     const values = [];
@@ -43,14 +41,12 @@ module.exports.listGetReport = async (req, res) => {
       values.push(`%${roomName}%`);
     }
 
-    sql += ` GROUP BY DATE_TRUNC('month', rs.started_at), rt.type_name, r.room_name
+    sql += ` GROUP BY DATE_TRUNC('month', rs.started_at)
              ORDER BY DATE_TRUNC('month', rs.started_at);`;
 
 
     const result = await pool.query(sql, values);
     const reports = result.rows;
-
-    
 
     res.render("pages/report-list", {
       pageTitle: "Lập báo cáo",
