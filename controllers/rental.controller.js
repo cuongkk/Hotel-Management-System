@@ -7,7 +7,7 @@ module.exports.list = async (req, res) => {
     const page = parseInt(req.query.page) || 1;
     const pageSize = parseInt(req.query.pageSize) || 10;
 
-    let sqlForReport = `
+    let sqlForRental = `
       SELECT DISTINCT
         r.room_id AS room_id,
         r.room_name,
@@ -28,22 +28,22 @@ module.exports.list = async (req, res) => {
     let idx = 1;
 
     if (roomName) {
-      sqlForReport += ` AND r.room_name ILIKE $${idx++}`;
+      sqlForRental += ` AND r.room_name ILIKE $${idx++}`;
       values.push(`%${roomName}%`);
     }
     if (status) {
-      sqlForReport += ` AND r.status = $${idx++}::room_status`;
+      sqlForRental += ` AND r.status = $${idx++}::room_status`;
       values.push(status);
     }
     if (roomType) {
-      sqlForReport += ` AND rt.type_name = $${idx++}`;
+      sqlForRental += ` AND rt.type_name = $${idx++}`;
       values.push(roomType);
     }
 
-    sqlForReport += ` ORDER BY r.room_id LIMIT $${idx++} OFFSET $${idx++}`;
+    sqlForRental += ` ORDER BY r.room_id LIMIT $${idx++} OFFSET $${idx++}`;
     values.push(pageSize, (page - 1) * pageSize);
 
-    const result = await pool.query(sqlForReport, values);
+    const result = await pool.query(sqlForRental, values);
 
     // Đếm tổng số phòng để tính totalPages
     let countSql = `
@@ -90,8 +90,7 @@ module.exports.list = async (req, res) => {
 module.exports.createPost = async (req, res) => {
   const client = await db.pool.connect();
   try {
-    const { roomId, roomName, roomType, price, startDate, customers } =
-      req.body;
+      const { roomId, price, startDate, customers } = req.body;
 
     let finalPrice = parseFloat(price);
     if (customers.length > 2) finalPrice *= 1.25;
@@ -101,11 +100,17 @@ module.exports.createPost = async (req, res) => {
     if (hasForeign) finalPrice *= 1.5;
 
     await client.query("BEGIN");
+
+    const ruleResult = await client.query( 
+      "SELECT ratio, extra_guest_threshold FROM surcharge_rules WHERE rule_id = $1", [1] );
+
+    const rule = ruleResult.rows[0];
+
     const insertSlip = `
       INSERT INTO rental_slips (room_id, created_by, started_at, status, snap_price,
-        snap_max_guests, snap_surcharge_coefficient,
+        snap_max_guests, snap_surcharge_coefficient, snap_extra_guest_threshold,
         snap_surcharge_ratio)
-      VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
       RETURNING rental_slip_id
     `;
     const slipResult = await client.query(insertSlip, [
@@ -116,7 +121,8 @@ module.exports.createPost = async (req, res) => {
       finalPrice,
       customers.length,
       hasForeign ? 1.5 : 1.0,
-      customers.length > 2 ? 1.25 : 1.0,
+      rule.extra_guest_threshold,
+      rule.ratio,
     ]);
 
     const rentalSlipId = slipResult.rows[0].rental_slip_id;
@@ -150,32 +156,24 @@ module.exports.createPost = async (req, res) => {
       );
     }
 
-    const result = await client.query(
-      `SELECT 
-        r.room_id,
-        r.room_name, 
-        rt.type_name AS room_type, 
-        rt.base_price AS price, 
-        rt.max_guests 
-      FROM rooms r LEFT JOIN room_types rt ON r.room_type_id = rt.room_type_id 
-      WHERE r.room_id = $1`,
-      [roomId],
-    );
-
-    const room = result.rows[0];
+    await client.query( "UPDATE rooms SET status = $1 WHERE room_id = $2", ["OCCUPIED", roomId] );
 
     await client.query("COMMIT");
 
-    res.render("pages/rental-create", {
-      pageTitle: "Lập phiếu thuê phòng",
-      room,
-      rentalSlipId,
-      finalPrice,
-      roomName,
-      roomType,
-      startDate,
-      customers,
-    });
+    // chuyển hướng về route /rental
+    res.redirect("/rental");
+
+
+    // res.render("pages/rental-create", {
+    //   pageTitle: "Lập phiếu thuê phòng",
+    //   room,
+    //   rentalSlipId,
+    //   finalPrice,
+    //   roomName,
+    //   roomType,
+    //   startDate,
+    //   customers,
+    // });
   } catch (err) {
     await client.query("ROLLBACK");
     console.error("DB error:", err);

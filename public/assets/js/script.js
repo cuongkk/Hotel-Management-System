@@ -129,9 +129,60 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 });
 
+
+document.addEventListener("DOMContentLoaded", () => {
+  const guestCountInput = document.getElementById("guestCount");
+  const customerRows = document.getElementById("customerRows");
+  const maxGuest = Number(guestCountInput.getAttribute("max"));
+  const minGuest = Number(guestCountInput.getAttribute("min")) || 1;
+  
+  console.log("Max guest from DOM:", maxGuest);
+
+  function renderCustomerRows(count) {
+    customerRows.innerHTML = "";
+    for (let i = 0; i < count; i++) {
+      customerRows.innerHTML += `
+        <tr>
+          <td>${i + 1}</td>
+          <td><input type="text" name="customers[${i}][name]"></td>
+          <td>
+            <select name="customers[${i}][type]">
+              <option value="DOM">Nội địa</option>
+              <option value="FOR">Nước ngoài</option>
+            </select>
+          </td>
+          <td><input type="text" name="customers[${i}][idCard]"></td>
+          <td><input type="text" name="customers[${i}][phone]"></td>
+        </tr>
+      `;
+    }
+  }
+
+  function updateRows() {
+    let count = parseInt(guestCountInput.value, 10);
+    if (count > maxGuest) {
+      count = maxGuest;
+      guestCountInput.value = maxGuest; // ép về max
+    }
+    if (count < minGuest || isNaN(count)) {
+      count = minGuest;
+      guestCountInput.value = minGuest; // ép về min
+    }
+    renderCustomerRows(count);
+  }
+
+  // render mặc định
+  updateRows();
+
+  // khi thay đổi input (gõ tay hoặc bấm nút tăng/giảm)
+  guestCountInput.addEventListener("input", updateRows);
+  guestCountInput.addEventListener("change", updateRows);
+});
+
+
+
 document.addEventListener("DOMContentLoaded", () => {
   const saveBtn = document.getElementById("saveBtn");
-
 
   saveBtn.addEventListener("click", async (e) => {
     e.preventDefault();

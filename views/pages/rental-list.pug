@@ -72,10 +72,15 @@ block main
 									td.text-left= room.receptionist || "—"
 									td.text-left
 										.box-actions
-											a.inner-edit(href=`/rental/create?roomId=${room.room_id}`)
-												i.fa-solid.fa-pen-to-square
+											if room.status === "AVAILABLE"
+												a.inner-edit(href=`/rental/create?roomId=${room.room_id}`)
+													i.fa-solid.fa-pen-to-square
+											else
+												a.inner-edit.disabled(href="javascript:void(0)" style="pointer-events:none; opacity:0.5;")
+													i.fa-solid.fa-pen-to-square
 											a.inner-remove(href=`/rental/delete`)
 												i.fa-solid.fa-trash-can
+
 						else
 							tr
 							td(colspan="8" style="text-align:center") Không có dữ liệu
