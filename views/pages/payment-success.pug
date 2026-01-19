@@ -1,0 +1,32 @@
+extends ../layouts/default.pug
+
+block main
+  main.main(class="bg-gray-50 min-h-screen flex items-center justify-center p-4")
+    
+    div(class="bg-white p-8 rounded-2xl shadow-lg border border-gray-100 max-w-md w-full text-center")
+        
+        div(class="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6 animate-bounce")
+            i(class="fa-solid fa-check text-4xl text-green-600")
+
+        h1(class="text-2xl font-bold text-gray-800 mb-2") Thanh toán thành công!
+        p(class="text-gray-500 mb-6") 
+            | Giao dịch cho phòng 
+            span(class="font-bold text-blue-600") #{roomId} 
+            |  đã được hệ thống ghi nhận và hoàn tất.
+
+        div(class="bg-gray-50 rounded-lg p-4 mb-8 border border-gray-100")
+            div(class="flex justify-between text-sm mb-2")
+                span(class="text-gray-500") Thời gian:
+                span(class="font-medium text-gray-700") Vừa xong
+            div(class="flex justify-between text-sm")
+                span(class="text-gray-500") Trạng thái phòng:
+                span(class="font-bold text-green-600 uppercase text-xs bg-green-100 px-2 py-0.5 rounded") Available
+
+        div(class="flex flex-col gap-3")
+            a(href="/dashboard" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-lg shadow transition-all transform active:scale-95")
+                i(class="fa-solid fa-house mr-2")
+                | Quay về Tổng quan
+            
+            button(onclick="window.print()" class="w-full bg-white border border-gray-300 text-gray-700 font-medium py-3 rounded-lg hover:bg-gray-50 transition-colors")
+                i(class="fa-solid fa-print mr-2")
+                | In biên lai ngay
