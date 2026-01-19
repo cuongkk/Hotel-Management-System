@@ -2,6 +2,7 @@ const router = require("express").Router();
 
 const reportController = require("../controllers/report.controller.js");
 
-router.get("/", reportController.list);
+router.get("/", reportController.listGetReport);
+
 
 module.exports = router;
