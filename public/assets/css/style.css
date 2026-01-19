@@ -866,16 +866,21 @@ h1.box-title {
 
 .section-8 form {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: repeat(1, 1fr);
   gap: 30px;
+  margin-bottom: 30px;
 }
 
+.section-8 form .inner-list {
+  width: 100%;
+}
 .section-8 .inner-two-col {
   grid-column: span 2;
 }
 
 .section-8 .inner-group {
   position: relative;
+  width: 100%;
 }
 .section-8 .inner-group.inner-label {
   font-weight: 800;

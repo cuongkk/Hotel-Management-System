@@ -102,6 +102,185 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 });
 
+// Settings
+
+document.addEventListener("DOMContentLoaded", () => {
+  // 1. Xử lý nút Edit ở phần Quy định (Rule)
+  const editButtons = document.querySelectorAll(".inner-change");
+  editButtons.forEach((btn) => {
+    btn.addEventListener("click", function () {
+      // Tìm input cùng cấp với nút bấm
+      const input = this.previousElementSibling;
+      if (input) {
+        if (input.hasAttribute("readonly")) {
+          input.removeAttribute("readonly");
+          input.style.backgroundColor = "#fff"; // Đổi màu nền sáng lên
+          input.focus();
+        } else {
+          // Bấm lại để khóa (tùy chọn)
+          input.setAttribute("readonly", true);
+          input.style.backgroundColor = "#f0f0f0";
+        }
+      }
+    });
+  });
+
+  // 2. Xử lý Thêm dòng động (Dynamic Rows) - Code cũ của bạn, chỉnh sửa chút xíu
+  const handleDynamicRows = (btnId, containerSelector, isCustomerType = false) => {
+    const btnAdd = document.getElementById(btnId);
+    const container = document.querySelector(containerSelector);
+
+    btnAdd.addEventListener("click", (e) => {
+      e.preventDefault();
+      const rows = container.querySelectorAll(".row-item");
+      const lastRow = rows[rows.length - 1];
+
+      // Clone dòng cuối
+      const newRow = lastRow.cloneNode(true);
+
+      // Reset giá trị input
+      newRow.querySelectorAll("input").forEach((input) => {
+        input.value = "";
+        // Nếu là Customer Type ID thì dòng mới phải cho nhập (bỏ readonly, bỏ màu xám)
+        if (input.name === "customer_type_id") {
+          input.removeAttribute("readonly");
+          input.style.backgroundColor = "#fff";
+        }
+        // Nếu là Room Type ID (hidden) thì phải xóa value đi để Backend biết là Insert
+        if (input.name === "room_type_id") {
+          input.value = "";
+        }
+      });
+
+      container.appendChild(newRow);
+    });
+
+    // Xóa hàng (Giữ nguyên code cũ của bạn)
+    container.addEventListener("click", (e) => {
+      const btnRemove = e.target.closest(".inner-remove");
+      if (btnRemove) {
+        const rows = container.querySelectorAll(".row-item");
+        if (rows.length > 1) {
+          btnRemove.closest(".row-item").remove();
+        } else {
+          alert("Phải giữ lại ít nhất 1 dòng!");
+        }
+      }
+    });
+  };
+
+  handleDynamicRows("btn-add-customer", "#form-customer-types .inner-list", true);
+  handleDynamicRows("btn-add-room", "#form-room-types .inner-list");
+
+  // 3. LOGIC LƯU VÀ VALIDATE
+  const btnSave = document.getElementById("btn-save-all");
+
+  btnSave.addEventListener("click", async () => {
+    let isValid = true;
+    let errorMessage = "";
+
+    // --- Helper Validate ---
+    const isNumber = (val) => !isNaN(val) && val.trim() !== "";
+
+    // A. Lấy dữ liệu Rule
+    const ratioInput = document.querySelector('input[name="ratio"]');
+    const thresholdInput = document.querySelector('input[name="threshold"]');
+
+    if (!isNumber(ratioInput.value) || !isNumber(thresholdInput.value)) {
+      isValid = false;
+      errorMessage = "Tỷ lệ phụ thu và Số khách quy định phải là số hợp lệ.";
+    }
+
+    const ruleData = {
+      ratio: parseFloat(ratioInput.value),
+      extra_guest_threshold: parseInt(thresholdInput.value),
+    };
+
+    // B. Lấy dữ liệu Customer Types
+    const customerRows = document.querySelectorAll("#form-customer-types .row-item");
+    const customerTypes = [];
+
+    customerRows.forEach((row) => {
+      const id = row.querySelector('input[name="customer_type_id"]').value.trim();
+      const name = row.querySelector('input[name="type_name"]').value.trim();
+      const coeff = row.querySelector('input[name="surcharge_coefficient"]').value.trim();
+
+      if (!id || !name || !coeff) {
+        isValid = false;
+        errorMessage = "Vui lòng nhập đầy đủ thông tin Loại Khách.";
+        return;
+      }
+      if (!isNumber(coeff)) {
+        isValid = false;
+        errorMessage = "Hệ số phụ thu phải là số.";
+        return;
+      }
+
+      customerTypes.push({
+        customer_type_id: id,
+        type_name: name,
+        surcharge_coefficient: parseFloat(coeff),
+      });
+    });
+
+    // C. Lấy dữ liệu Room Types
+    const roomRows = document.querySelectorAll("#form-room-types .row-item");
+    const roomTypes = [];
+
+    roomRows.forEach((row) => {
+      const id = row.querySelector('input[name="room_type_id"]').value; // Có thể rỗng nếu là dòng mới
+      const name = row.querySelector('input[name="room_type_name"]').value.trim();
+      const price = row.querySelector('input[name="base_price"]').value.trim();
+      const maxGuests = row.querySelector('input[name="max_guests"]').value.trim();
+
+      if (!name || !price || !maxGuests) {
+        isValid = false;
+        errorMessage = "Vui lòng nhập đầy đủ thông tin Loại Phòng.";
+        return;
+      }
+      if (!isNumber(price) || !isNumber(maxGuests)) {
+        isValid = false;
+        errorMessage = "Giá và Số khách tối đa phải là số.";
+        return;
+      }
+
+      roomTypes.push({
+        room_type_id: id || null, // Nếu rỗng gửi null để backend biết insert
+        type_name: name,
+        base_price: parseFloat(price),
+        max_guests: parseInt(maxGuests),
+      });
+    });
+
+    // --- Kiểm tra kết quả Validate ---
+    if (!isValid) {
+      alert("Lỗi: " + errorMessage);
+      return; // Dừng lại không gửi
+    }
+
+    // --- Gửi dữ liệu về Server ---
+    try {
+      const response = await fetch("/admin/setting", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ rule: ruleData, customerTypes, roomTypes }),
+      });
+
+      const result = await response.json();
+      if (response.ok) {
+        alert("Cập nhật thành công!");
+        window.location.reload();
+      } else {
+        alert("Lỗi server: " + result.message);
+      }
+    } catch (error) {
+      console.error(error);
+      alert("Không thể kết nối đến server.");
+    }
+  });
+});
+
+// End Settings
 // RENTAL
 
 document.addEventListener("DOMContentLoaded", () => {
