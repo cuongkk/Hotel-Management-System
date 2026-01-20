@@ -1,3 +1,4 @@
+const bcrypt = require("bcryptjs");
 const staffModel = require("../models/staff.model");
 
 module.exports.list = async (req, res, next) => {
@@ -65,8 +66,7 @@ module.exports.createPost = async (req, res) => {
     if (!["STAFF", "MANAGER"].includes(role)) {
       return res.json({ result: "error", message: "Chức vụ không hợp lệ." });
     }
-
-    // const password_hash = await bcrypt.hash(password, 10);
+    const password_hash = await bcrypt.hash(password, 10);
 
     await staffModel.createUser({
       username: username.trim(),
@@ -74,7 +74,7 @@ module.exports.createPost = async (req, res) => {
       full_name: full_name.trim(),
       phone_number: phone_number.trim(),
       role,
-      password_hash: password,
+      password_hash: password_hash,
     });
 
     return res.json({ result: "success", message: "Tạo nhân viên thành công." });

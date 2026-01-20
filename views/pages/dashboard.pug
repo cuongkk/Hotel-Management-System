@@ -20,45 +20,46 @@ block main
 						+stat-card('Đang thuê', 'horizontal', Statistic.totalOccupiedRooms, 'fa-solid fa-key', 'bg-orange-100', 'text-orange-600')
 						+stat-card('Bảo trì', 'horizontal', Statistic.totalMaintenanceRooms, 'fa-solid fa-wrench', 'bg-red-100', 'text-red-600')
 
-				div(class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-10")            
-						div(class="lg:col-span-2 bg-white rounded-2xl shadow-sm border border-gray-100 p-6")
-								div(class="flex items-center justify-between mb-6")
-										h2(class="text-lg font-bold text-gray-800") Tình hình nhân sự
-										span(class="bg-gray-100 text-gray-600 text-xs px-2 py-1 rounded") Real-time
-								
-								div(class="flex flex-row flex-wrap justify-between gap-6")
-										+stat-card('Hoạt động', 'vertical', Statistic.totalActiveStaffs, 'fa-solid fa-user-check', 'bg-green-100', 'text-green-600')
-										+stat-card('Nghỉ/Off', 'vertical', Statistic.totalInactiveStaffs, 'fa-solid fa-user-times', 'bg-red-100', 'text-red-600')
-										+stat-card('Tổng nhân sự', 'vertical', Statistic.totalStaffs, 'fa-solid fa-users', 'bg-blue-500', 'text-white')                    
-
-						div(class="lg:col-span-1 bg-white rounded-2xl shadow-sm border border-gray-100 p-6 flex flex-col h-full gap-4")
-								div(class="mb-4 border-b border-gray-100 pb-4")
-										h2(class="text-lg font-bold text-gray-800") Doanh thu
-										p(class="text-xs text-gray-500") Lọc theo khoảng thời gian thực tế
-								
-								form(action="" method="GET" class="flex flex-col gap-3")
-										div(class="grid grid-cols-2 gap-3")
-												div
-														label(class="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1 block") Từ ngày
-														input#startDate(type="date" name="startDate" value=filter.startDate class="w-full bg-gray-50 border border-gray-200 text-gray-700 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 outline-none transition") 
-												div
-														label(class="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1 block") Đến ngày
-														input#endDate(type="date" name="endDate" value=filter.endDate class="w-full bg-gray-50 border border-gray-200 text-gray-700 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 outline-none transition")
+				if account.role === 'MANAGER'
+						div(class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-10")            
+								div(class="lg:col-span-2 bg-white rounded-2xl shadow-sm border border-gray-100 p-6")
+										div(class="flex items-center justify-between mb-6")
+												h2(class="text-lg font-bold text-gray-800") Tình hình nhân sự
+												span(class="bg-gray-100 text-gray-600 text-xs px-2 py-1 rounded") Real-time
 										
-										button(type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-medium rounded-lg text-sm px-5 py-2.5 text-center transition-colors duration-200 flex justify-center items-center gap-2") 
-												i(class="fa-solid fa-filter") 
-												| Áp dụng bộ lọc
+										div(class="flex flex-row flex-wrap justify-between gap-6")
+												+stat-card('Hoạt động', 'vertical', Statistic.totalActiveStaffs, 'fa-solid fa-user-check', 'bg-green-100', 'text-green-600')
+												+stat-card('Nghỉ/Off', 'vertical', Statistic.totalInactiveStaffs, 'fa-solid fa-user-times', 'bg-red-100', 'text-red-600')
+												+stat-card('Tổng nhân sự', 'vertical', Statistic.totalStaffs, 'fa-solid fa-users', 'bg-blue-500', 'text-white')                    
 
-								div(class="relative group flex flex-col justify-center items-center bg-white shadow-sm p-6 overflow-hidden")
-										p(class="text-sm text-gray-400 font-medium mb-1") Tổng doanh thu ước tính
-										p(class="text-4xl font-extrabold text-emerald-600 tracking-tight group-hover:scale-110 transition-transform duration-300 ease-in-out") 
-												| #{new Intl.NumberFormat('vi-VN').format(Statistic.totalRevenue)}
-												span(class="text-xl text-emerald-500 ml-1") ₫
+								div(class="lg:col-span-1 bg-white rounded-2xl shadow-sm border border-gray-100 p-6 flex flex-col h-full gap-4")
+										div(class="mb-4 border-b border-gray-100 pb-4")
+												h2(class="text-lg font-bold text-gray-800") Doanh thu
+												p(class="text-xs text-gray-500") Lọc theo khoảng thời gian thực tế
+										
+										form(action="" method="GET" class="flex flex-col gap-3")
+												div(class="grid grid-cols-2 gap-3")
+														div
+																label(class="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1 block") Từ ngày
+																input#startDate(type="date" name="startDate" value=filter.startDate class="w-full bg-gray-50 border border-gray-200 text-gray-700 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 outline-none transition") 
+														div
+																label(class="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1 block") Đến ngày
+																input#endDate(type="date" name="endDate" value=filter.endDate class="w-full bg-gray-50 border border-gray-200 text-gray-700 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 outline-none transition")
+												
+												button(type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-medium rounded-lg text-sm px-5 py-2.5 text-center transition-colors duration-200 flex justify-center items-center gap-2") 
+														i(class="fa-solid fa-filter") 
+														| Áp dụng bộ lọc
 
-										span(class="absolute top-0 left-0 h-0.5 w-0 bg-emerald-500 transition-all duration-200 group-hover:w-full")
-										span(class="absolute top-0 right-0 h-0 w-0.5 bg-emerald-500 transition-all duration-100 delay-200 group-hover:h-full") 
-										span(class="absolute bottom-0 right-0 h-0.5 w-0 bg-emerald-500 transition-all duration-200 delay-300 group-hover:w-full") 
-										span(class="absolute bottom-0 left-0 h-0 w-0.5 bg-emerald-500 transition-all duration-100 delay-500 group-hover:h-full") 
+										div(class="relative group flex flex-col justify-center items-center bg-white shadow-sm p-6 overflow-hidden")
+												p(class="text-sm text-gray-400 font-medium mb-1") Tổng doanh thu ước tính
+												p(class="text-4xl font-extrabold text-emerald-600 tracking-tight group-hover:scale-110 transition-transform duration-300 ease-in-out") 
+														| #{new Intl.NumberFormat('vi-VN').format(Statistic.totalRevenue)}
+														span(class="text-xl text-emerald-500 ml-1") ₫
+
+												span(class="absolute top-0 left-0 h-0.5 w-0 bg-emerald-500 transition-all duration-200 group-hover:w-full")
+												span(class="absolute top-0 right-0 h-0 w-0.5 bg-emerald-500 transition-all duration-100 delay-200 group-hover:h-full") 
+												span(class="absolute bottom-0 right-0 h-0.5 w-0 bg-emerald-500 transition-all duration-200 delay-300 group-hover:w-full") 
+												span(class="absolute bottom-0 left-0 h-0 w-0.5 bg-emerald-500 transition-all duration-100 delay-500 group-hover:h-full") 
 
 				div(class='block mb-56')
 						div(class="flex flex-col md:flex-row justify-between items-center mb-6 gap-8")
@@ -155,35 +156,4 @@ block main
 								p Không tìm thấy phòng nào phù hợp
 
 		script(src="/assets/js/room-filter.js")
-		script.
-				document.addEventListener('DOMContentLoaded', function() {
-						// Lắng nghe sự kiện click trên toàn bộ document
-						document.addEventListener('click', function(e) {
-								const target = e.target;
-								const menuBtn = target.closest('.room-menu-btn');
-								const dropdown = target.closest('.room-menu-dropdown');
-
-								// 1. Nếu click vào nút 3 chấm
-								if (menuBtn) {
-										e.preventDefault();
-										e.stopPropagation(); // Ngăn chặn nổi bọt sự kiện
-										
-										const currentDropdown = menuBtn.nextElementSibling;
-										
-										// Đóng tất cả các menu khác đang mở
-										document.querySelectorAll('.room-menu-dropdown').forEach(d => {
-												if (d !== currentDropdown) d.classList.add('hidden');
-										});
-
-										// Toggle menu hiện tại
-										currentDropdown.classList.toggle('hidden');
-								}
-								
-								// 2. Nếu click ra ngoài menu -> Đóng tất cả
-								else if (!dropdown) {
-										document.querySelectorAll('.room-menu-dropdown').forEach(d => {
-												d.classList.add('hidden');
-										});
-								}
-						});
-				});
+		script(src="/assets/js/room-menu.js")

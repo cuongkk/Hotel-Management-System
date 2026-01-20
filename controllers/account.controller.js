@@ -42,8 +42,8 @@ module.exports.loginPost = async (req, res) => {
         message: "Tài khoản chưa được kích hoạt",
       });
     }
-    // const ok = await bcrypt.compare(password, existAccount.password_hash);
-    if (password !== existAccount.password_hash) {
+    const ok = await bcrypt.compare(password, existAccount.password_hash);
+    if (!ok) {
       return res.status(401).json({
         result: "error",
         message: "Mật khẩu không đúng",
