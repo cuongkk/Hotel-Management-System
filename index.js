@@ -40,8 +40,9 @@ pool
     console.log("Connected to PostgreSQL");
     client.release();
 
-    app.listen(port, () => {
-      console.log(`Server running at http://localhost:${port}`);
+    const PORT = process.env.PORT || port;
+    app.listen(PORT, () => {
+      console.log(`Server running at http://localhost:${PORT}`);
     });
   })
   .catch((err) => {
