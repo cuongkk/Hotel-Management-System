@@ -92,11 +92,15 @@ document.addEventListener("DOMContentLoaded", () => {
   btn.addEventListener("click", () => {
     const roomName = document.getElementById("roomName")?.value.trim();
     const roomType = document.getElementById("roomType")?.value;
+    const startDate = document.getElementById("startDate")?.value; 
+    const endDate = document.getElementById("endDate")?.value;
 
     const params = new URLSearchParams();
 
     if (roomName) params.append("roomName", roomName);
     if (roomType) params.append("roomType", roomType);
+    if (startDate) params.append("startDate", startDate);
+    if (endDate) params.append("endDate", endDate);
 
     window.location.href = `/report?${params.toString()}`;
   });

@@ -2,7 +2,18 @@ const pool = require("../configs/database.config");
 
 module.exports.listGetReport = async (req, res) => {
   try {
-    const { roomType, roomName } = req.query;
+    const { roomType, roomName, endDate, startDate } = req.query;
+
+    // if (!startDate) {
+    //   return res
+    //     .status(400)
+    //     .json({ result: "error", message: "Chưa nhập ngày bắt đầu" });
+    // }
+    // if (!endDate) {
+    //   return res
+    //     .status(400)
+    //     .json({ result: "error", message: "Chưa nhập ngày kết thúc" });
+    // }
 
     let sql = `
       SELECT 
@@ -28,9 +39,15 @@ module.exports.listGetReport = async (req, res) => {
       JOIN rooms r ON rs.room_id = r.room_id
       JOIN room_types rt ON r.room_type_id = rt.room_type_id
       LEFT JOIN invoices i ON rs.rental_slip_id = i.rental_slip_id
-      WHERE rs.status = 'COMPLETED' 
-        AND rs.started_at BETWEEN CURRENT_DATE - INTERVAL '1 year' AND CURRENT_DATE
+      WHERE rs.status = 'COMPLETED'
     `;
+
+    if (startDate && endDate) {
+      sql += ` AND rs.started_at BETWEEN $${idx++} AND $${idx++}`;
+      values.push(startDate, endDate);
+    } else {
+      sql += ` AND rs.started_at BETWEEN CURRENT_DATE - INTERVAL '1 year' AND CURRENT_DATE`;
+    }
 
     if (roomType) {
       sql += ` AND rt.type_name = $${idx++}`;
@@ -44,7 +61,6 @@ module.exports.listGetReport = async (req, res) => {
     sql += ` GROUP BY DATE_TRUNC('month', rs.started_at)
              ORDER BY DATE_TRUNC('month', rs.started_at);`;
 
-
     const result = await pool.query(sql, values);
     const reports = result.rows;
 
@@ -55,7 +71,6 @@ module.exports.listGetReport = async (req, res) => {
       reports,
       reportsJson: JSON.stringify(reports),
     });
-
   } catch (err) {
     console.error("DB error:", err);
     res.status(500).send("Server error");
