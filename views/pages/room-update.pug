@@ -2,83 +2,62 @@ extends ../layouts/default.pug
 include ../mixins/checkbox-30.pug
 
 block main
-  main.main
-    h1.box-title Phòng #{room.room_name}
+	main.main
+		h1.box-title Phòng #{room.room_name}
 
-    .section-8
-      form(
-        action=`/room/update/${room.room_id}`
-        method="POST"
-        id="room-edit-form"
-      )
-        input(type="hidden" name="_method" value="PUT")
+		.section-8
+			form(
+				id="room-update-form"
+				data-id=room.room_id 
+			)
+				
+				.inner-group
+					label.inner-label(for="room_name") Tên phòng
+					input(
+						disabled
+						type="text"
+						id="room_name"
+						name="room_name"
+						value=room.room_name
+						required
+					)
 
-        .inner-group
-          label.inner-label(for="room_name") Tên phòng
-          input(
-            type="text"
-            id="room_name"
-            name="room_name"
-            value=room.room_name
-            required
-          )
+				.inner-group
+					label.inner-label(for="room_type_id") Loại phòng
+					select(
+						id="room_type_id"
+						name="room_type_id"
+						required
+						disabled=(room.status === "OCCUPIED")
+					)
+						if roomTypesList
+							each type in roomTypesList
+								option(
+									value=type.room_type_id 
+									selected=(room.room_type_id == type.room_type_id)
+								) #{type.type_name}
 
-        .inner-group
-          label.inner-label(for="room_type_id") Loại phòng
-          select(
-            id="room_type_id"
-            name="room_type_id"
-						value=room.room_type
-            required
-          )
-            option(value="") Chọn loại phòng
-            option(value="1" selected=room.room_type==="Standard") Standard
-            option(value="2" selected=room.room_type==="Superior") Superior
-            option(value="3" selected=room.room_type==="Deluxe") Deluxe
+				.inner-group
+					label.inner-label(for="status") Trạng thái
+					select(
+						id="status"
+						name="status"
+						required
+						disabled=(room.status === "OCCUPIED")
+					)
+						option(value="AVAILABLE" selected=room.status==="AVAILABLE") Hoạt động
+						option(value="OCCUPIED" selected=room.status==="OCCUPIED") Đang thuê
+						option(value="MAINTENANCE" selected=room.status==="MAINTENANCE") Tạm dừng
 
-        .inner-group
-          label.inner-label(for="base_price") Đơn giá
-          input(
-            type="number"
-            id="base_price"
-            name="base_price"
-            value=room.base_price
-            required
-          )
+				.inner-group.inner-note
+					label.inner-label(for="note") Ghi chú
+					textarea(
+						id="note"
+						name="note"
+					)= room.note || ""
 
-        .inner-group
-          label.inner-label(for="max_guests") Số khách tối đa
-          input(
-            type="number"
-            id="max_guests"
-            name="max_guests"
-            value=room.max_guests
-            required
-          )
+				.inner-button.inner-two-col()
+					button(type="submit") Lưu
 
-        .inner-group
-          label.inner-label(for="status") Trạng thái
-          select(
-            id="status"
-            name="status"
-			value=room.status
-            required
-          )
-            option(value="AVAILABLE" selected=room.status==="AVAILABLE") Hoạt động
-            option(value="OCCUPIED" selected=room.status==="OCCUPIED") Đang thuê
-            option(value="MAINTENANCE" selected=room.status==="MAINTENANCE") Tạm dừng
-
-        .inner-group.inner-note
-          label.inner-label(for="note") Ghi chú
-          textarea(
-            id="note"
-            name="note"
-          )= room.note || ""
-
-        .inner-button.inner-two-col(
-          style="display: flex; justify-content: space-between;"
-        )
-          button(type="submit") Lưu
-
-    .inner-back
-      a(href="/room") Quay lại danh sách
+			.inner-back
+				a(href="/room") Quay lại danh sách

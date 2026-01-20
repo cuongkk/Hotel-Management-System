@@ -16,7 +16,6 @@ TRUNCATE TABLE
     room_types,
     users
 RESTART IDENTITY CASCADE;
-
 -- =========================================================
 -- 1) USERS
 -- =========================================================
@@ -25,8 +24,8 @@ INSERT INTO users (
     phone_number, role, is_active, created_at
 )
 VALUES
-('admin',   'admin@hotel.com',   'hash_admin',   'Quan tri he thong', NULL,        'ADMIN',   TRUE, NOW()),
-('manager', 'manager@hotel.com', 'hash_manager', 'Quan ly khach san', '0900000000','MANAGER', TRUE, NOW());
+('admin',   'admin@hotel.com',   '$2b$10$jPs1WY.JlOjBJ9ANLHIFZe3i6ze5Hn/otH6kakdm8HyOuYARCCUHa',   'Quan tri he thong', NULL,        'ADMIN',   TRUE, NOW()),
+('manager', 'manager@hotel.com', '$2b$10$jPs1WY.JlOjBJ9ANLHIFZe3i6ze5Hn/otH6kakdm8HyOuYARCCUHa', 'Quan ly khach san', '0900000000','MANAGER', TRUE, NOW());
 
 -- staffs (28)
 INSERT INTO users (
@@ -36,7 +35,7 @@ INSERT INTO users (
 SELECT
     'staff' || LPAD(gs::text, 2, '0'),
     'staff' || LPAD(gs::text, 2, '0') || '@hotel.com',
-    'hash_staff' || gs::text,
+    '$2b$10$jPs1WY.JlOjBJ9ANLHIFZe3i6ze5Hn/otH6kakdm8HyOuYARCCUHa',
     'Nhan vien ' || gs::text,
     'STAFF'::user_role,
     TRUE,

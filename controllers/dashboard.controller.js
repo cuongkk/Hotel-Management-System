@@ -61,6 +61,7 @@ module.exports.dashboard = async (req, res) => {
 
     res.render("pages/dashboard.pug", {
       pageTitle: "Tổng quan",
+      account: req.account,
       Statistic: {
         totalAvailableRooms,
         totalOccupiedRooms,

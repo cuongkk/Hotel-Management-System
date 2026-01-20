@@ -5,12 +5,10 @@ block main
   main.main
     h1.box-title Cài đặt
     .section-8
-      //- 1. FORM QUY ĐỊNH (Surcharge Rules)
       form(action="" id="form-rules")
         .inner-group.inner-two-col(style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px;")
           .inner-group 
             label.inner-label Tỷ lệ phụ thu
-            //- Thêm class input-rule và readonly
             input.input-rule(type="text" name="ratio" value=rule.ratio readonly style="background-color: #f0f0f0;") 
             button.inner-change(type="button"): i.fa-solid.fa-pen-to-square
           .inner-group 
@@ -18,7 +16,6 @@ block main
             input.input-rule(type="text" name="threshold" value=rule.extra_guest_threshold readonly style="background-color: #f0f0f0;")
             button.inner-change(type="button"): i.fa-solid.fa-pen-to-square
 
-      //- 2. FORM LOẠI KHÁCH (Customer Types)
       form(action="" id="form-customer-types")
         .inner-list
           .inner-group.inner-two-col(style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px;")
@@ -29,7 +26,6 @@ block main
           
           each item in customerTypes
             .inner-group.inner-two-col.row-item(style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; margin-bottom: 10px;")
-              //- Với customer_type_id là khóa chính Varchar, nếu là dòng cũ thì nên readonly để tránh sửa ID làm hỏng quan hệ database
               input(type="text" name="customer_type_id" value=item.customer_type_id readonly style="background-color: #e9ecef") 
               input(type="text" name="type_name" value=item.type_name)
               input(type="text" name="surcharge_coefficient" value=item.surcharge_coefficient)
@@ -39,7 +35,6 @@ block main
         .inner-button
           button#btn-add-customer(type="button" style="margin-top: 10px;") + Thêm loại khách
 
-      //- 3. FORM LOẠI PHÒNG (Room Types)
       form(action="" id="form-room-types")
         .inner-list
           .inner-group.inner-two-col(style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px;")
@@ -50,7 +45,6 @@ block main
 
           each room in roomTypes
             .inner-group.inner-two-col.row-item(style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; margin-bottom: 10px;")
-              //- QUAN TRỌNG: Input hidden chứa ID để backend biết đây là Update
               input(type="hidden" name="room_type_id" value=room.room_type_id)
               
               input(type="text" name="room_type_name" value=room.type_name)
@@ -63,4 +57,4 @@ block main
           button#btn-add-room(type="button" style="margin-top: 10px;") + Thêm loại phòng
 
       .inner-button(style="margin-top: 30px;")
-        button#btn-save-all.btn-save(type="button") Lưu tất cả cấu hình
+        button#btn-save-all.btn-save() Lưu tất cả cấu hình

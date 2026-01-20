@@ -370,3 +370,94 @@ if (profileForm) {
 }
 
 //End Profile Form
+
+// Room Update Form
+const roomUpdateForm = document.querySelector("#room-update-form");
+
+if (roomUpdateForm) {
+  roomUpdateForm.addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    const roomId = roomUpdateForm.getAttribute("data-id");
+
+    const formData = new FormData(roomUpdateForm);
+    const data = Object.fromEntries(formData.entries());
+
+    try {
+      const response = await fetch(`/room/update/${roomId}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      });
+
+      const result = await response.json();
+
+      if (result.result === "success") {
+        Notify("success", result.message);
+        window.location.href = "/room";
+      } else {
+        notyf.error("Lỗi: " + result.message);
+      }
+    } catch (err) {
+      console.error(err);
+      notyf.error("Có lỗi xảy ra khi kết nối server.");
+    }
+  });
+}
+
+// End Room Update Form
+
+// Room Create Form
+
+const roomCreateForm = document.querySelector("#room-create-form");
+
+if (roomCreateForm) {
+  const validation = new JustValidate("#room-create-form", {
+    errorFieldCssClass: "is-invalid",
+  });
+
+  validation
+    .addField("#room_name", [
+      {
+        rule: "required",
+        errorMessage: "Vui lòng nhập tên phòng",
+      },
+    ])
+    .addField("#room_type_id", [
+      {
+        rule: "required",
+        errorMessage: "Vui lòng chọn loại phòng",
+      },
+    ])
+    .onSuccess((event) => {
+      const formData = new FormData(roomCreateForm);
+      const data = Object.fromEntries(formData.entries());
+
+      fetch("/room/create", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          if (data.result === "error") {
+            notyf.error(data.message);
+            return;
+          }
+
+          Notify("success", data.message);
+          setTimeout(() => {
+            window.location.href = "/room";
+          }, 1000);
+        })
+        .catch((err) => {
+          notyf.error(data.message);
+          alert("Lỗi kết nối server");
+        });
+    });
+}
+// End Room Create Form

@@ -1,138 +1,139 @@
 const pool = require("../configs/database.config");
+const roomModel = require("../models/room.model");
 
-exports.list = async (req, res) => {
+module.exports.list = async (req, res, next) => {
   try {
-    // ===== 1. Lấy filter & pagination từ query =====
-    const { roomName, status, roomType } = req.query;
-    const page = parseInt(req.query.page) || 1;
-    const pageSize = parseInt(req.query.pageSize) || 10;
+    const page = req.query.page || 1;
+    const pageSize = req.query.pageSize || 10;
 
-    // ===== 2. SQL chính =====
-    let sql = `
-      SELECT
-        r.room_id,
-        r.room_name,
-        r.status,
-        r.note,
-        rt.room_type_id,
-        rt.type_name AS room_type,
-        rt.max_guests,
-        rt.base_price
-      FROM rooms r
-      LEFT JOIN room_types rt 
-        ON r.room_type_id = rt.room_type_id
-      WHERE 1=1 AND r.status != 'REMOVED'
-    `;
+    const q = req.query.roomName || "";
+    const status = req.query.status || "";
+    const roomType = req.query.roomType || "";
 
-    const values = [];
-    let idx = 1;
-
-    // ===== 3. Filter động =====
-    if (roomName) {
-      sql += ` AND r.room_name ILIKE $${idx++}`;
-      values.push(`%${roomName}%`);
-    }
-
-    if (status) {
-      sql += ` AND r.status = $${idx++}::room_status`;
-      values.push(status);
-    }
-
-    if (roomType) {
-      sql += ` AND rt.type_name = $${idx++}`;
-      values.push(roomType);
-    }
-
-    // ===== 4. Pagination =====
-    sql += ` ORDER BY r.room_id ASC LIMIT $${idx++} OFFSET $${idx++}`;
-    values.push(pageSize, (page - 1) * pageSize);
-
-    const result = await pool.query(sql, values);
-
-    // ===== 5. Query COUNT =====
-    let countSql = `
-      SELECT COUNT(*)
-      FROM rooms r
-      LEFT JOIN room_types rt 
-        ON r.room_type_id = rt.room_type_id
-      WHERE 1=1 AND r.status != 'REMOVED'
-    `;
-
-    const countValues = [];
-    let cIdx = 1;
-
-    if (roomName) {
-      countSql += ` AND r.room_name ILIKE $${cIdx++}`;
-      countValues.push(`%${roomName}%`);
-    }
-
-    if (status) {
-      countSql += ` AND r.status = $${cIdx++}::room_status`;
-      countValues.push(status);
-    }
-
-    if (roomType) {
-      countSql += ` AND rt.type_name = $${cIdx++}`;
-      countValues.push(roomType);
-    }
-
-    const countResult = await pool.query(countSql, countValues);
-    const total = parseInt(countResult.rows[0].count, 10);
-    const totalPages = Math.ceil(total / pageSize);
-
-    // ===== 6. Render =====
-    res.render("pages/room-list.pug", {
-      pageTitle: "Quản lý phòng",
-      rooms: result.rows,
-      filters: { roomName, status, roomType },
+    const result = await roomModel.findRoomPaged({
+      q,
+      status,
+      roomType,
       page,
       pageSize,
-      total,
-      totalPages
     });
 
-  } catch (error) {
-    console.error("DB error:", error);
-    res.status(500).send("Server error");
+    const roomTypesList = await roomModel.getAllRoomTypes();
+
+    res.render("pages/room-list.pug", {
+      pageTitle: "Quản lý phòng",
+
+      rooms: result.rows,
+
+      page: result.page,
+      pageSize: result.pageSize,
+      total: result.total,
+      totalPages: result.totalPages,
+
+      filters: {
+        roomName: q,
+        status: status,
+        roomType: roomType,
+      },
+
+      roomTypesList: roomTypesList,
+    });
+  } catch (err) {
+    next(err);
   }
 };
 
+module.exports.showCreate = async (req, res) => {
+  try {
+    const rawRoomTypes = await roomModel.getAllRoomTypes();
+    const roomTypesList = rawRoomTypes.rows ? rawRoomTypes.rows : rawRoomTypes;
 
-exports.showCreate = (req, res) => {
-  res.render("pages/room-create.pug", {
-    pageTitle: "Tạo phòng mới"
-  });
+    res.render("pages/room-create", {
+      pageTitle: "Thêm phòng mới",
+      roomTypesList: roomTypesList,
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Server Error");
+  }
+};
+
+module.exports.generateNextRoomId = async () => {
+  // 1. Lấy room_id lớn nhất hiện tại (Sắp xếp giảm dần)
+  const query = "SELECT room_id FROM rooms ORDER BY room_id DESC LIMIT 1";
+  const result = await pool.query(query);
+
+  let nextId = "R0001"; // Giá trị mặc định nếu bảng rỗng
+
+  if (result.rows.length > 0) {
+    const lastId = result.rows[0].room_id; // Ví dụ: "R0030"
+
+    // 2. Tách phần số: Bỏ chữ "R", lấy "0030" -> chuyển thành số 30
+    const currentNumber = parseInt(lastId.replace("R", ""), 10);
+
+    // 3. Tăng lên 1
+    const nextNumber = currentNumber + 1;
+
+    // 4. Format lại thành chuỗi 4 chữ số (pad zero) -> "0031"
+    // padStart(4, '0') nghĩa là nếu thiếu thì điền số 0 vào trước cho đủ 4 ký tự
+    nextId = `R${nextNumber.toString().padStart(4, "0")}`;
+  }
+
+  return nextId;
+};
+
+module.exports.createRoom = async (data) => {
+  const { room_id, room_name, room_type_id, note } = data;
+  const query = `
+      INSERT INTO rooms (room_id, room_name, room_type_id, status, note)
+      VALUES ($1, $2, $3, 'AVAILABLE', $4)
+    `;
+  return await pool.query(query, [room_id, room_name, room_type_id, note]);
 };
 
 exports.create = async (req, res) => {
-  const { room_id, room_name, room_type_id, status, note } = req.body;
+  const { room_name, room_type_id, note } = req.body;
 
-  if (!room_id || !room_name) {
-    return res.status(400).send("Missing required fields");
+  if (!room_name || !room_type_id) {
+    return res.json({ result: "error", message: "Thiếu thông tin bắt buộc" });
   }
 
   try {
-    await pool.query(
-      `INSERT INTO rooms (room_id, room_name, room_type_id, status, note)
-       VALUES ($1, $2, $3, $4, $5)`,
-      [room_id, room_name, room_type_id, status, note]
-    );
+    const isDuplicate = await roomModel.checkRoomNameExists(room_name);
+    if (isDuplicate) {
+      return res.json({
+        result: "error",
+        message: `Tên phòng "${room_name}" đã tồn tại. Vui lòng chọn tên khác.`,
+      });
+    }
 
-    res.redirect("/rooms");
+    const newRoomId = await roomModel.generateNextRoomId();
+
+    await roomModel.createRoom({
+      room_id: newRoomId,
+      room_name,
+      room_type_id,
+      note,
+    });
+
+    return res.json({
+      result: "success",
+      message: `Thêm phòng thành công! Mã: ${newRoomId}`,
+    });
   } catch (err) {
     console.error(err);
-    res.status(500).send("Database error");
+    res.status(500).json({ result: "error", message: "Lỗi hệ thống: " + err.message });
   }
 };
 
-
-exports.showUpdate = async (req, res) => {
+module.exports.showUpdate = async (req, res) => {
   const { id } = req.params;
 
   try {
     const { id } = req.params;
 
-    const result = await pool.query(`
+    const result = await pool.query(
+      `
       SELECT
         r.room_id,
         r.room_name,
@@ -147,15 +148,18 @@ exports.showUpdate = async (req, res) => {
       LEFT JOIN room_types rt
         ON r.room_type_id = rt.room_type_id
       WHERE r.room_id = $1
-    `, [id]);
+    `,
+      [id],
+    );
+    const roomTypesList = await roomModel.getAllRoomTypes();
 
     if (result.rows.length === 0) {
       return res.status(404).send("Room not found");
     }
-
     res.render("pages/room-update", {
       pageTitle: "Cập nhật phòng",
-      room: result.rows[0]
+      room: result.rows[0],
+      roomTypesList: roomTypesList,
     });
   } catch (err) {
     console.error(err);
@@ -165,46 +169,53 @@ exports.showUpdate = async (req, res) => {
 
 exports.update = async (req, res) => {
   const { id } = req.params;
-  const { room_name, room_type_id, status, note } = req.body;
+  const updates = req.body;
 
-  try {
-    const result = await pool.query(
-      `UPDATE rooms
-       SET room_name = $1,
-           room_type_id = $2,
-           status = $3,
-           note = $4
-       WHERE room_id = $5`,
-      [room_name, room_type_id, status, note, id]
-    );
+  const allowedColumns = ["room_name", "room_type_id", "status", "note"];
 
-    if (result.rowCount === 0) {
-      return res.status(404).send("Room not found");
+  const setClauses = [];
+  const values = [];
+  let paramIndex = 1;
+
+  allowedColumns.forEach((col) => {
+    if (updates[col] !== undefined) {
+      setClauses.push(`${col} = $${paramIndex}`);
+      values.push(updates[col]);
+      paramIndex++;
     }
+  });
 
-    res.redirect("/room");
-  } catch (err) {
-    console.error(err);
-    res.status(500).send("Database error");
+  if (setClauses.length === 0) {
+    return res.json({ result: "info", message: "Không có dữ liệu nào cần cập nhật" });
   }
-};
 
-exports.delete = async (req, res) => {
-  const { id } = req.params;
-  console.log("DELETE ROOM ID =", req.params.id);
+  values.push(id);
+
+  const queryString = `
+    UPDATE rooms
+    SET ${setClauses.join(", ")}
+    WHERE room_id = $${paramIndex}
+  `;
+
   try {
-    const result = await pool.query(
-      "UPDATE rooms SET status = 'REMOVED' WHERE room_id = $1",
-      [id]
-    );
+    if (updates.room_name) {
+      const isDuplicate = await roomModel.checkRoomNameExists(updates.room_name, id);
+      if (isDuplicate) {
+        return res.json({
+          result: "error",
+          message: `Tên phòng "${updates.room_name}" đã được sử dụng bởi phòng khác.`,
+        });
+      }
+    }
+    const result = await pool.query(queryString, values);
 
     if (result.rowCount === 0) {
-      return res.status(404).send("Room not found");
+      return res.status(404).json({ result: "error", message: "Phòng không tồn tại" });
     }
 
-    res.redirect("/room");
+    return res.json({ result: "success", message: "Cập nhật phòng thành công" });
   } catch (err) {
     console.error(err);
-    res.status(500).send("Database error");
+    res.status(500).json({ result: "error", message: "Lỗi cơ sở dữ liệu: " + err.message });
   }
 };

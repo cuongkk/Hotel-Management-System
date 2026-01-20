@@ -39,7 +39,7 @@ CREATE TABLE IF NOT EXISTS password_reset_otps (
 CREATE TABLE room_types (
     room_type_id SERIAL PRIMARY KEY,
     type_name VARCHAR(50) NOT NULL,
-    base_price DECIMAL(10, 2) NOT NULL CHECK (base_price >= 0),
+    base_price DECIMAL(10, 0) NOT NULL CHECK (base_price >= 0),
     max_guests INT NOT NULL DEFAULT 3,
     description TEXT,
     is_active BOOLEAN DEFAULT TRUE

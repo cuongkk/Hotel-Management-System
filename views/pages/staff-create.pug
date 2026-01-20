@@ -23,8 +23,9 @@ block main
           label.inner-label(for="type") Chức vụ
           select(id="type" name="type")
             option(value="") Chọn chức vụ
-            option(value="STAFF") Lễ tân
-            option(value="MANAGER") Quản lý
+            if staffTypes
+              each type in staffTypes
+                option(value=type) #{type	}
 
         .inner-group 
           label.inner-label(for="password") Mật khẩu

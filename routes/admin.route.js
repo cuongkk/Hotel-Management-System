@@ -6,4 +6,8 @@ router.get("/", adminController.setting);
 
 router.post("/setting", adminController.updateSetting);
 
+router.delete("/customer-type/:id", adminController.deleteCustomerType);
+
+router.delete("/room-type/:id", adminController.deleteRoomType);
+
 module.exports = router;

@@ -1,5 +1,15 @@
 const { query } = require("../configs/database.config.js");
 
+module.exports.findAllStaffTypes = async () => {
+  const sql = `
+    SELECT DISTINCT role
+    FROM users
+		WHERE role != 'ADMIN' AND role != 'MANAGER'
+  `;
+  const result = await query(sql);
+  return result.rows.map((row) => row.role);
+};
+
 module.exports.findAllStaff = async ({ q } = {}) => {
   const keyword = (q || "").trim();
 
