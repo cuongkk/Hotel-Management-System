@@ -1,5 +1,6 @@
 const pool = require("../configs/database.config");
 const db = require("../configs/database.config");
+const roomModel = require("../models/room.model");
 
 module.exports.list = async (req, res) => {
   try {
@@ -68,6 +69,7 @@ module.exports.list = async (req, res) => {
       countSql += ` AND rt.type_name = $${cIdx++}`;
       countValues.push(roomType);
     }
+    const roomTypesList = await roomModel.getAllRoomTypes();
 
     const countResult = await pool.query(countSql, countValues);
     const total = parseInt(countResult.rows[0].count, 10);
@@ -81,6 +83,7 @@ module.exports.list = async (req, res) => {
       pageSize,
       total,
       totalPages,
+      roomTypesList: roomTypesList,
     });
   } catch (err) {
     console.error("DB error:", err);

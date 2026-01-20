@@ -105,19 +105,16 @@ document.addEventListener("DOMContentLoaded", () => {
 // Settings
 
 document.addEventListener("DOMContentLoaded", () => {
-  // 1. Xử lý nút Edit ở phần Quy định (Rule)
   const editButtons = document.querySelectorAll(".inner-change");
   editButtons.forEach((btn) => {
     btn.addEventListener("click", function () {
-      // Tìm input cùng cấp với nút bấm
       const input = this.previousElementSibling;
       if (input) {
         if (input.hasAttribute("readonly")) {
           input.removeAttribute("readonly");
-          input.style.backgroundColor = "#fff"; // Đổi màu nền sáng lên
+          input.style.backgroundColor = "#fff";
           input.focus();
         } else {
-          // Bấm lại để khóa (tùy chọn)
           input.setAttribute("readonly", true);
           input.style.backgroundColor = "#f0f0f0";
         }
@@ -125,8 +122,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 
-  // 2. Xử lý Thêm dòng động (Dynamic Rows) - Code cũ của bạn, chỉnh sửa chút xíu
-  const handleDynamicRows = (btnId, containerSelector, isCustomerType = false) => {
+  const handleDynamicRows = (btnId, containerSelector, deleteEndpoint = "") => {
     const btnAdd = document.getElementById(btnId);
     const container = document.querySelector(containerSelector);
 
@@ -135,10 +131,8 @@ document.addEventListener("DOMContentLoaded", () => {
       const rows = container.querySelectorAll(".row-item");
       const lastRow = rows[rows.length - 1];
 
-      // Clone dòng cuối
       const newRow = lastRow.cloneNode(true);
 
-      // Reset giá trị input
       newRow.querySelectorAll("input").forEach((input) => {
         input.value = "";
         // Nếu là Customer Type ID thì dòng mới phải cho nhập (bỏ readonly, bỏ màu xám)
@@ -155,34 +149,53 @@ document.addEventListener("DOMContentLoaded", () => {
       container.appendChild(newRow);
     });
 
-    // // Xóa hàng (Giữ nguyên code cũ của bạn)
-    // container.addEventListener("click", (e) => {
-    //   const btnRemove = e.target.closest(".inner-remove");
-    //   if (btnRemove) {
-    //     const rows = container.querySelectorAll(".row-item");
-    //     if (rows.length > 1) {
-    //       btnRemove.closest(".row-item").remove();
-    //     } else {
-    //       alert("Phải giữ lại ít nhất 1 dòng!");
-    //     }
-    //   }
-    // });
+    container.addEventListener("click", async (e) => {
+      const btnRemove = e.target.closest(".inner-remove");
+      if (!btnRemove) return;
+
+      const row = btnRemove.closest(".row-item");
+      const idInput = row.querySelector('input[name="customer_type_id"]') || row.querySelector('input[name="room_type_id"]');
+
+      const idValue = idInput ? idInput.value : "";
+
+      if (!idValue) {
+        const allRows = container.querySelectorAll(".row-item");
+        if (allRows.length > 1) row.remove();
+        else alert("Phải giữ lại ít nhất 1 dòng!");
+        return;
+      }
+
+      if (confirm("Bạn có chắc chắn muốn xóa mục này?")) {
+        try {
+          const response = await fetch(`${deleteEndpoint}/${idValue}`, {
+            method: "DELETE",
+          });
+          const result = await response.json();
+
+          if (response.ok) {
+            notyf.success(result.message);
+            row.remove();
+          } else {
+            notyf.error(result.message);
+          }
+        } catch (error) {
+          notyf.error("Lỗi kết nối server.");
+        }
+      }
+    });
   };
 
-  handleDynamicRows("btn-add-customer", "#form-customer-types .inner-list", true);
-  handleDynamicRows("btn-add-room", "#form-room-types .inner-list");
+  handleDynamicRows("btn-add-customer", "#form-customer-types .inner-list", "/admin/customer-type");
+  handleDynamicRows("btn-add-room", "#form-room-types .inner-list", "/admin/room-type");
 
-  // 3. LOGIC LƯU VÀ VALIDATE
   const btnSave = document.getElementById("btn-save-all");
 
   btnSave.addEventListener("click", async () => {
     let isValid = true;
     let errorMessage = "";
 
-    // --- Helper Validate ---
     const isNumber = (val) => !isNaN(val) && val.trim() !== "";
 
-    // A. Lấy dữ liệu Rule
     const ratioInput = document.querySelector('input[name="ratio"]');
     const thresholdInput = document.querySelector('input[name="threshold"]');
 
@@ -196,7 +209,6 @@ document.addEventListener("DOMContentLoaded", () => {
       extra_guest_threshold: parseInt(thresholdInput.value),
     };
 
-    // B. Lấy dữ liệu Customer Types
     const customerRows = document.querySelectorAll("#form-customer-types .row-item");
     const customerTypes = [];
 
@@ -223,12 +235,11 @@ document.addEventListener("DOMContentLoaded", () => {
       });
     });
 
-    // C. Lấy dữ liệu Room Types
     const roomRows = document.querySelectorAll("#form-room-types .row-item");
     const roomTypes = [];
 
     roomRows.forEach((row) => {
-      const id = row.querySelector('input[name="room_type_id"]').value; // Có thể rỗng nếu là dòng mới
+      const id = row.querySelector('input[name="room_type_id"]').value;
       const name = row.querySelector('input[name="room_type_name"]').value.trim();
       const price = row.querySelector('input[name="base_price"]').value.trim();
       const maxGuests = row.querySelector('input[name="max_guests"]').value.trim();
@@ -245,20 +256,18 @@ document.addEventListener("DOMContentLoaded", () => {
       }
 
       roomTypes.push({
-        room_type_id: id || null, // Nếu rỗng gửi null để backend biết insert
+        room_type_id: id || null,
         type_name: name,
         base_price: parseFloat(price),
         max_guests: parseInt(maxGuests),
       });
     });
 
-    // --- Kiểm tra kết quả Validate ---
     if (!isValid) {
       notyf.error("Lỗi: " + errorMessage);
-      return; // Dừng lại không gửi
+      return;
     }
 
-    // --- Gửi dữ liệu về Server ---
     try {
       const response = await fetch("/admin/setting", {
         method: "POST",
@@ -268,7 +277,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
       const result = await response.json();
       if (response.ok) {
-        notyf.success("Cập nhật thành công!");
+        Notify("success", "Cập nhật thành công!");
         window.location.reload();
       } else {
         notyf.error("Lỗi server: " + result.message);
