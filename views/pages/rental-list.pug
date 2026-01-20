@@ -66,8 +66,6 @@ block main
 											span.status.status-green Hoạt động
 										else if room.status === "OCCUPIED"
 											span.status.status-orange Đang thuê
-										else
-											span.status.status-red Tạm dừng
 									td.text-left
 										if room.status === "AVAILABLE"
 											div="—"
@@ -107,3 +105,5 @@ block main
 
 block scripts
 	script(src="/assets/js/script.js")
+
+

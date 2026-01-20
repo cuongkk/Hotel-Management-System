@@ -92,15 +92,21 @@ document.addEventListener("DOMContentLoaded", () => {
   btn.addEventListener("click", () => {
     const roomName = document.getElementById("roomName")?.value.trim();
     const roomType = document.getElementById("roomType")?.value;
+    const startDate = document.getElementById("startDate")?.value; 
+    const endDate = document.getElementById("endDate")?.value;
 
     const params = new URLSearchParams();
 
     if (roomName) params.append("roomName", roomName);
     if (roomType) params.append("roomType", roomType);
+    if (startDate) params.append("startDate", startDate);
+    if (endDate) params.append("endDate", endDate);
 
     window.location.href = `/report?${params.toString()}`;
   });
 });
+
+
 
 // Settings
 
@@ -370,25 +376,29 @@ document.addEventListener("DOMContentLoaded", () => {
   function renderCustomerRows(count) {
     customerRows.innerHTML = "";
     for (let i = 0; i < count; i++) {
+      const optionsHtml = window.customerTypes
+        .map(ct => `<option value="${ct.customer_type_id}">${ct.type_name}</option>`)
+        .join("");
+
       customerRows.insertAdjacentHTML(
         "beforeend",
         `
         <tr>
           <td>${i + 1}</td>
-          <td><input type="text" name="customers[${i}][name]" id="name"></td>
+          <td><input type="text" name="customers[${i}][name]"></td>
           <td>
-            <select name="customers[${i}][type]">
-              <option value="DOM">Nội địa</option>
-              <option value="FOR">Nước ngoài</option>
+            <select name="customers[${i}][customer_type_id]">
+              ${optionsHtml}
             </select>
           </td>
-          <td><input type="text" name="customers[${i}][idCard]" id="idCard"></td>
-          <td><input type="text" name="customers[${i}][phone]" id="phone"></td>
+          <td><input type="text" name="customers[${i}][idCard]"></td>
+          <td><input type="text" name="customers[${i}][phone]"></td>
         </tr>
-        `,
+        `
       );
     }
   }
+
 
   function updateRows() {
     let count = parseInt(guestCountInput.value, 10);

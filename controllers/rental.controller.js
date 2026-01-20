@@ -205,9 +205,14 @@ module.exports.createGet = async (req, res) => {
     const result = await pool.query(sql, [roomId]);
 
     const room = result.rows[0];
+
+    const typesResult = await pool.query("SELECT customer_type_id, type_name FROM customer_types"); 
+    const customerTypes = typesResult.rows;
+
     res.render("pages/rental-create", {
       pageTitle: "Lập phiếu thuê phòng",
       room,
+      customerTypes,
     });
   } catch (error) {
     res.status(500).send("Server error");

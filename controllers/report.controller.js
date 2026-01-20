@@ -3,9 +3,31 @@ const roomModel = require("../models/room.model");
 
 module.exports.listGetReport = async (req, res) => {
   try {
-    const { roomType, roomName } = req.query;
+    const { roomType, roomName, endDate, startDate } = req.query;
 
     const roomTypesList = await roomModel.getAllRoomTypes();
+
+    if (!startDate || !endDate) {
+      return res.render("pages/report-list", {
+        pageTitle: "Lập báo cáo",
+        roomType,
+        roomName,
+        roomTypesList,
+        reports: [],
+        reportsJson: "[]",
+      });
+    }
+
+    if (startDate && !endDate) {
+      return res
+        .status(400)
+        .json({ result: "error", message: "Vui lòng nhập ngày kết thúc" });
+    }
+    if (endDate && !startDate) {
+      return res
+        .status(400)
+        .json({ result: "error", message: "Vui lòng nhập ngày bắt đầu" });
+    }
 
     let sql = `
       SELECT 
@@ -31,9 +53,10 @@ module.exports.listGetReport = async (req, res) => {
       JOIN rooms r ON rs.room_id = r.room_id
       JOIN room_types rt ON r.room_type_id = rt.room_type_id
       LEFT JOIN invoices i ON rs.rental_slip_id = i.rental_slip_id
-      WHERE rs.status = 'COMPLETED' 
-        AND rs.started_at BETWEEN CURRENT_DATE - INTERVAL '1 year' AND CURRENT_DATE
+      WHERE rs.status = 'COMPLETED'
+      AND rs.started_at BETWEEN $${idx++} AND $${idx++}
     `;
+    values.push(startDate, endDate);
 
     if (roomType) {
       sql += ` AND rt.type_name = $${idx++}`;

@@ -10,14 +10,28 @@ block main
 				.inner-wrap
 					.inner-item.inner-label
 						<i class="fa-solid fa-filter"></i> Bộ lọc
+
 					.inner-item
+						label.inner-label(for="roomType") 
 						select(id="roomType")
-							option(value="") Loại phòng
-							if roomTypesList
-								each type in roomTypesList
-										option(value=type.type_name selected=(roomType == type.type_name)) #{type.type_name}
+							option(value="") Loại phòng 
+							option(value="Standard") Loại Standard
+							option(value="Superior") Loại Superior
+							option(value="Deluxe") Loại Deluxe
+
+					.inner-item
+						label.inner-label(for="startDate") Ngày bắt đầu
+						input(type="date" id="startDate" name="startDate" required)
+
+					.inner-item
+						label.inner-label(for="endDate") Ngày kết thúc
+						input(type="date" id="endDate" name="endDate" required)
+
 					.inner-item.inner-reset 
 						button(type="button" id="applyBtnForReport") Áp dụng
+			//- End Section 4
+
+			//- Section 5
 			.section-5
 				.inner-wrap
 					.inner-search
