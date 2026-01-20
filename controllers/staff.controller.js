@@ -1,5 +1,7 @@
 const bcrypt = require("bcryptjs");
 const staffModel = require("../models/staff.model");
+const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
 
 module.exports.list = async (req, res, next) => {
   try {
@@ -29,7 +31,7 @@ module.exports.list = async (req, res, next) => {
 module.exports.find = async (req, res, next) => {
   try {
     const q = (req.query.q || "").trim();
-    const by = (req.query.by || "name").trim(); // name | phone
+    const by = (req.query.by || "name").trim();
     const page = req.query.page || 1;
     const pageSize = req.query.pageSize || 10;
 
@@ -39,11 +41,9 @@ module.exports.find = async (req, res, next) => {
       pageTitle: "Quản lý nhân viên",
       staffs: result.rows,
 
-      // giữ state để FE show đúng
       q,
       by,
 
-      // pagination data
       page: result.page,
       pageSize: result.pageSize,
       total: result.total,
@@ -58,7 +58,6 @@ module.exports.createPost = async (req, res) => {
   try {
     const { username, email, full_name, phone_number, role, password } = req.body;
 
-    // Validate BE tối thiểu
     if (!username || !email || !full_name || !phone_number || !role || !password) {
       return res.json({ result: "error", message: "Thiếu dữ liệu bắt buộc." });
     }
@@ -79,7 +78,6 @@ module.exports.createPost = async (req, res) => {
 
     return res.json({ result: "success", message: "Tạo nhân viên thành công." });
   } catch (err) {
-    // unique violation (username/email)
     if (err.code === "23505") {
       return res.json({ result: "error", message: "Username hoặc Email đã tồn tại." });
     }
@@ -88,8 +86,10 @@ module.exports.createPost = async (req, res) => {
   }
 };
 
-module.exports.create = (req, res) => {
+module.exports.create = async (req, res) => {
+  const staffTypes = await staffModel.findAllStaffTypes();
   res.render("pages/staff-create.pug", {
     pageTitle: "Thêm nhân viên",
+    staffTypes,
   });
 };
