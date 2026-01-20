@@ -7,51 +7,99 @@ module.exports.listGetReport = async (req, res) => {
 
     const roomTypesList = await roomModel.getAllRoomTypes();
 
-    if (!startDate || !endDate) {
+    if ((startDate && !endDate) || (!startDate && endDate)) {
+      return res.status(400).json({
+        result: "error",
+        message: !endDate ? "Vui lòng nhập ngày kết thúc" : "Vui lòng nhập ngày bắt đầu",
+      });
+    }
+
+    if (!startDate && !endDate) {
+      const values = [];
+      let idx = 1;
+
+      const metricSelect = roomName ? "COALESCE(SUM(i.total_days), 0) AS total_days" : "COALESCE(SUM(i.total_amount), 0) AS total_revenue";
+
+      let sql = `
+        WITH months AS (
+          SELECT generate_series(
+            date_trunc('month', now()) - interval '4 months',
+            date_trunc('month', now()),
+            interval '1 month'
+          ) AS month
+        )
+        SELECT
+          m.month,
+          ${metricSelect}
+        FROM months m
+        LEFT JOIN invoices i
+          ON date_trunc('month', i.payment_date) = m.month
+        LEFT JOIN rental_slips rs
+          ON rs.rental_slip_id = i.rental_slip_id
+          AND rs.status = 'COMPLETED'
+        LEFT JOIN rooms r ON rs.room_id = r.room_id
+        LEFT JOIN room_types rt ON r.room_type_id = rt.room_type_id
+        WHERE 1=1
+      `;
+
+      if (roomType) {
+        sql += ` AND rt.type_name = $${idx++}`;
+        values.push(roomType);
+      }
+      if (roomName) {
+        sql += ` AND r.room_name ILIKE $${idx++}`;
+        values.push(`%${roomName}%`);
+      }
+
+      sql += `
+        GROUP BY m.month
+        ORDER BY m.month;
+      `;
+
+      const result = await pool.query(sql, values);
+      const reports = result.rows;
+
       return res.render("pages/report-list", {
         pageTitle: "Lập báo cáo",
         roomType,
         roomName,
         roomTypesList,
-        reports: [],
-        reportsJson: "[]",
+        reports,
+        reportsJson: JSON.stringify(reports),
       });
     }
-
-    if (startDate && !endDate) {
-      return res.status(400).json({ result: "error", message: "Vui lòng nhập ngày kết thúc" });
-    }
-    if (endDate && !startDate) {
-      return res.status(400).json({ result: "error", message: "Vui lòng nhập ngày bắt đầu" });
-    }
-
-    let sql = `
-      SELECT 
-        DATE_TRUNC('month', rs.started_at) AS month,
-    `;
 
     const values = [];
     let idx = 1;
 
-    if (roomType) {
-      // Nếu nhập mã phòng → tính doanh
-      sql += ` SUM(i.total_amount) AS total_revenue `;
-    } else if (roomName) {
-      // Nếu nhập tên phòng → tính tổng ngày thuê
-      sql += ` SUM(i.total_days) AS total_days `;
-    } else {
-      // Mặc định → doanh thu
-      sql += ` SUM(i.total_amount) AS total_revenue `;
-    }
+    const metricSelect = roomName ? "COALESCE(SUM(i.total_days), 0) AS total_days" : "COALESCE(SUM(i.total_amount), 0) AS total_revenue";
 
-    sql += `
-      FROM rental_slips rs
-      JOIN rooms r ON rs.room_id = r.room_id
-      JOIN room_types rt ON r.room_type_id = rt.room_type_id
-      LEFT JOIN invoices i ON rs.rental_slip_id = i.rental_slip_id
-      WHERE rs.status = 'COMPLETED'
-      AND rs.started_at BETWEEN $${idx++} AND $${idx++}
+    let sql = `
+      WITH months AS (
+        SELECT generate_series(
+          date_trunc('month', $${idx++}::date),
+          date_trunc('month', $${idx++}::date),
+          interval '1 month'
+        ) AS month
+      )
+      SELECT
+        m.month,
+        ${metricSelect}
+      FROM months m
+      LEFT JOIN invoices i
+        ON date_trunc('month', i.payment_date) = m.month
+        AND i.payment_date >= $${idx++}::date
+        AND i.payment_date <  ($${idx++}::date + interval '1 day')
+      LEFT JOIN rental_slips rs
+        ON rs.rental_slip_id = i.rental_slip_id
+        AND rs.status = 'COMPLETED'
+      LEFT JOIN rooms r ON rs.room_id = r.room_id
+      LEFT JOIN room_types rt ON r.room_type_id = rt.room_type_id
+      WHERE 1=1
     `;
+
+    values.push(startDate, endDate);
+
     values.push(startDate, endDate);
 
     if (roomType) {
@@ -63,17 +111,19 @@ module.exports.listGetReport = async (req, res) => {
       values.push(`%${roomName}%`);
     }
 
-    sql += ` GROUP BY DATE_TRUNC('month', rs.started_at)
-             ORDER BY DATE_TRUNC('month', rs.started_at);`;
+    sql += `
+      GROUP BY m.month
+      ORDER BY m.month;
+    `;
 
     const result = await pool.query(sql, values);
     const reports = result.rows;
 
-    res.render("pages/report-list", {
+    return res.render("pages/report-list", {
       pageTitle: "Lập báo cáo",
       roomType,
       roomName,
-      roomTypesList: roomTypesList,
+      roomTypesList,
       reports,
       reportsJson: JSON.stringify(reports),
     });
