@@ -1,6 +1,5 @@
 const bcrypt = require("bcryptjs");
 const staffModel = require("../models/staff.model");
-const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 
 module.exports.list = async (req, res, next) => {
