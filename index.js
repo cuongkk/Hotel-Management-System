@@ -41,7 +41,7 @@ pool
     client.release();
 
     const PORT = process.env.PORT || port;
-    app.listen(PORT, () => {
+    app.listen(PORT, "0.0.0.0", () => {
       console.log(`Server running at http://localhost:${PORT}`);
     });
   })
