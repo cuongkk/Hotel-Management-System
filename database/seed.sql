@@ -228,7 +228,7 @@ JOIN LATERAL (
 ON CONFLICT DO NOTHING;
 
 -- =========================================================
--- 8) INVOICES
+-- 8) INVOICES (payment_date: 2025-01-01 -> now)
 -- =========================================================
 INSERT INTO invoices (
     rental_slip_id, created_by, payer_name,
@@ -240,7 +240,10 @@ SELECT
     rs.created_by,
     'Nguoi tra #' || rs.rental_slip_id,
     (ARRAY['CASH','BANK_TRANSFER','CARD'])[1 + floor(random()*3)],
-    NOW() - interval '30 days',
+    (
+      (now() AT TIME ZONE 'Asia/Ho_Chi_Minh')
+      - (random() * ((now() AT TIME ZONE 'Asia/Ho_Chi_Minh') - timestamp '2025-01-01'))::interval
+    )::timestamp,
     d.days,
     ROUND(d.days * rs.snap_price * rs.snap_surcharge_coefficient, 2),
     'Thanh toan'

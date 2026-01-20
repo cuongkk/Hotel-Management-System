@@ -19,14 +19,10 @@ module.exports.listGetReport = async (req, res) => {
     }
 
     if (startDate && !endDate) {
-      return res
-        .status(400)
-        .json({ result: "error", message: "Vui lòng nhập ngày kết thúc" });
+      return res.status(400).json({ result: "error", message: "Vui lòng nhập ngày kết thúc" });
     }
     if (endDate && !startDate) {
-      return res
-        .status(400)
-        .json({ result: "error", message: "Vui lòng nhập ngày bắt đầu" });
+      return res.status(400).json({ result: "error", message: "Vui lòng nhập ngày bắt đầu" });
     }
 
     let sql = `
